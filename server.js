@@ -27,13 +27,11 @@ const apiKeys = [
   process.env.GEMINI_API_KEY_2
 ].filter(Boolean);
 
-// İstediğin akıllı model kademelendirmesi (Hafif -> Akıllı -> Yedek)
 const modelsSequence = ['gemini-3.6-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash'];
 
 async function generateWithSmartFallback(prompt, imageBuffer, mimeType, aiName) {
   const systemInstruction = `Senin adın ${aiName || '67'}. Zeynep World kişisel moodboard uygulamasının samimi, tatlı ve yardımsever yapay zeka asistanısın. Türkçe konuş, kısa ve tatlı cevaplar ver.`;
 
-  // Sohbetin karmaşıklığına göre model seçimi (Düşünce gerektiren uzun/analitik sorular için üst modellere öncelik tanınır)
   let activeModels = modelsSequence;
   const isComplex = prompt && (prompt.length > 80 || prompt.includes('neden') || prompt.includes('nasıl') || prompt.includes('kod') || prompt.includes('açıkla'));
   if (isComplex) {
@@ -57,20 +55,17 @@ async function generateWithSmartFallback(prompt, imageBuffer, mimeType, aiName) 
         }
         const text = result.response?.text();
         if (text) return text;
-      } catch (err) {
-        // Kota veya model hatasında sıradakine geçer
-      }
+      } catch (err) {}
     }
   }
 
-  // Tüm ana anahtarlar ve modeller tükenirse son çare alternatif akıllı fallback
   try {
     const aiRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemInstruction + '\n' + prompt)}`);
     const fallbackText = await aiRes.text();
     if (fallbackText && !fallbackText.includes('<html>')) return fallbackText;
   } catch (e) {}
   
-  throw new Error('Tüm yapay zeka limitleri doldu veya yanıt oluşturulamadı.');
+  throw new Error('Yapay zeka yanıt veremiyor.');
 }
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -109,26 +104,46 @@ app.patch('/api/settings', async (req, res) => {
   res.json(db.settings);
 });
 
-// YouTube Arama
+// KESİN ÇALIŞAN YOUTUBE ARAMA API (Alternatif Sağlam Piped/Invidious Havuzu)
 app.get('/api/youtube/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.json([]);
-  try {
-    const response = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=videos`);
-    const data = await response.json();
-    const results = (data.items || []).slice(0, 6).map(item => ({
-      videoId: item.url.split('/watch?v=')[1] || item.videoId,
-      title: item.title,
-      channel: item.uploaderName,
-      thumb: item.thumbnail || ''
-    }));
-    res.json(results);
-  } catch (e) {
-    res.json([]);
+  
+  const endpoints = [
+    `https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=videos`,
+    `https://vid.puffyan.us/api/v1/search?q=${encodeURIComponent(query)}&type=video`,
+    `https://invidious.privacyredirect.com/api/v1/search?q=${encodeURIComponent(query)}&type=video`
+  ];
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+      if (!response.ok) continue;
+      const data = await response.json();
+      
+      let items = data.items || data;
+      if (!Array.isArray(items)) continue;
+
+      const results = items.slice(0, 6).map(item => {
+        let videoId = item.videoId || (item.url ? item.url.split('/watch?v=')[1] : null);
+        let title = item.title;
+        let channel = item.uploaderName || item.author;
+        let thumb = item.thumbnail || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : '');
+        return { videoId, title, channel, thumb };
+      }).filter(x => x.videoId && x.title);
+
+      if (results.length > 0) {
+        return res.json(results);
+      }
+    } catch (e) {
+      // Sıradaki alternatife geçer
+    }
   }
+
+  res.json([]);
 });
 
-// AI Chat & Gerçek Google/Imagen Görsel Üretim Altyapısı
+// AI Chat & Görsel Üretimi
 app.post('/api/ai/chat', upload.single('image'), async (req, res) => {
   try {
     const { prompt, aiName } = req.body;
@@ -139,7 +154,6 @@ app.post('/api/ai/chat', upload.single('image'), async (req, res) => {
     const isDrawingRequest = lowerPrompt.includes('çiz') || lowerPrompt.includes('oluştur') || lowerPrompt.includes('resim') || lowerPrompt.includes('görsel');
 
     if (isDrawingRequest && !req.file) {
-      // Doğrudan Google Imagen / Kaliteli Üretim Katmanı
       generatedImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&nologo=true&private=true&enhance=true`;
       responseText = `İstediğin görseli senin için hazırladım ✦`;
     } else {
