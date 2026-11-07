@@ -40,24 +40,29 @@
 body{ font-family:var(--fb); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; padding-bottom:80px; }
 
 header{
-  position:sticky;top:0;z-index:200; height:58px;padding:0 32px;
+  position:sticky;top:0;z-index:200; height:58px;padding:0 20px;
   display:flex;align-items:center;justify-content:space-between;
   background:var(--bg);border-bottom:1px solid var(--border); backdrop-filter:blur(24px);
 }
-.logo{ font-family:var(--fd); font-size:1.45rem; font-style:italic; color:var(--text); display:flex;align-items:center;gap:6px; }
+.logo{ font-family:var(--fd); font-size:1.3rem; font-style:italic; color:var(--text); display:flex;align-items:center;gap:6px; }
 .logo em{color:var(--accent);font-style:normal;}
 
-.theme-bar{ display:flex;align-items:center;gap:6px; background:var(--surface); border:1px solid var(--border); border-radius:50px;padding:5px 8px; }
-.th-btn{ border:none;cursor:pointer;border-radius:50px;padding:5px 13px; font-family:var(--fb);font-size:.7rem;font-weight:500; color:var(--text3);background:transparent;transition:all .25s; }
+.theme-bar{ display:flex;align-items:center;gap:4px; background:var(--surface); border:1px solid var(--border); border-radius:50px;padding:4px 6px; }
+.th-btn{ border:none;cursor:pointer;border-radius:50px;padding:4px 10px; font-family:var(--fb);font-size:.65rem;font-weight:500; color:var(--text3);background:transparent;transition:all .25s; }
 .th-btn.on{background:var(--accent);color:var(--bg);font-weight:700;}
 
+/* RESPONSIVE GRID LAYOUT */
 .wrapper{ display:grid; grid-template-columns:1fr 340px; min-height:calc(100vh - 138px); }
+@media(max-width: 900px) {
+  .wrapper { grid-template-columns: 1fr; }
+  aside.sidebar { border-top: 1px solid var(--border); }
+}
+
 .board-col{ display:grid; grid-template-rows:1fr auto; border-right:1px solid var(--border); }
-.corkboard{ padding:0; background:var(--cork); min-height:520px; position:relative; overflow:hidden; }
-.board-items{ position:relative; width:100%; height:100%; min-height:600px; }
+.corkboard{ padding:0; background:var(--cork); min-height:450px; position:relative; overflow:hidden; }
+.board-items{ position:relative; width:100%; height:100%; min-height:500px; }
 .board-empty{ position:absolute;inset:0; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px; color:var(--text3);font-family:var(--fh);font-size:1.2rem; pointer-events:none; }
 
-/* FIX: POINTER EVENTS NONE EKLENDİ Kİ TIKLAMALARI ENGELLEMESİN */
 .pinned-photo, .q-bubble, .envelope-item, .add-zone { position: relative; overflow: hidden; z-index: 1; }
 .pinned-photo::before, .q-bubble::before, .envelope-item::before, .add-zone::before {
   content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
@@ -66,102 +71,111 @@ header{
 }
 .pinned-photo:active::before, .q-bubble:active::before, .envelope-item:active::before, .add-zone:active::before, .add-zone:hover::before { transform: translateX(100%); }
 
-.pinned-photo { --fill-color: #ff3d6b; position: absolute; cursor: grab; width: 160px; }
-.photo-frame{ background:#fff; padding:9px 9px 30px; transform:rotate(var(--rot)); box-shadow:3px 5px 18px rgba(0,0,0,.3); }
-.photo-frame img, .photo-frame video { width:140px;height:140px;object-fit:cover;display:block; }
-.photo-caption{ font-family:var(--fh);font-size:.8rem;color:#555;text-align:center;padding:5px 2px 0; }
-.pin-tack{ position:absolute;top:-12px;left:50%;transform:translateX(-50%);z-index:30; pointer-events:none; }
-.pin-head{ width:14px;height:14px;background:radial-gradient(circle at 38% 32%,#ff99aa,var(--pin)); border-radius:50%; }
-.pin-shaft{ width:2px;height:9px;background:#888;margin:0 auto; }
+.pinned-photo { --fill-color: #ff3d6b; position: absolute; cursor: grab; width: 150px; }
+.photo-frame{ background:#fff; padding:8px 8px 28px; transform:rotate(var(--rot)); box-shadow:3px 5px 18px rgba(0,0,0,.3); }
+.photo-frame img, .photo-frame video { width:134px;height:134px;object-fit:cover;display:block; }
+.photo-caption{ font-family:var(--fh);font-size:.78rem;color:#555;text-align:center;padding:4px 2px 0; }
+.pin-tack{ position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:30; pointer-events:none; }
+.pin-head{ width:12px;height:12px;background:radial-gradient(circle at 38% 32%,#ff99aa,var(--pin)); border-radius:50%; }
+.pin-shaft{ width:2px;height:8px;background:#888;margin:0 auto; }
 .photo-del, .q-del, .env-del{ position:absolute;top:-7px;right:-7px; width:22px;height:22px; background:#ff3d6b; border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:40; }
 .pinned-photo:hover .photo-del, .q-bubble:hover .q-del, .envelope-item:hover .env-del { display:flex; }
 
-.q-bubble{ --fill-color: #7b5ef8; position: absolute; cursor: grab; background:var(--bubble-bg); border:1px solid var(--border); border-radius:20px; padding:15px 18px; max-width:260px; min-width:160px; }
-.q-text{ font-family:var(--fh);font-size:1.05rem;color:var(--text); }
-.q-footer{ display:flex;align-items:center;justify-content:space-between;margin-top:7px; }
-.q-stars{ color:var(--accent3);font-size:.72rem; }
+.q-bubble{ --fill-color: #7b5ef8; position: absolute; cursor: grab; background:var(--bubble-bg); border:1px solid var(--border); border-radius:20px; padding:14px 16px; max-width:240px; min-width:150px; }
+.q-text{ font-family:var(--fh);font-size:1rem;color:var(--text); }
+.q-footer{ display:flex;align-items:center;justify-content:space-between;margin-top:6px; }
+.q-stars{ color:var(--accent3);font-size:.7rem; }
 
-.envelope-box { --fill-color: #f4e8c1; background: #f4e8c1; color: #4a3b2c; padding: 12px 18px; border-radius: 6px; font-family: var(--fh); font-size: 1.1rem; text-align: center; width: 150px; cursor: pointer; }
+.envelope-box { --fill-color: #f4e8c1; background: #f4e8c1; color: #4a3b2c; padding: 10px 15px; border-radius: 6px; font-family: var(--fh); font-size: 1rem; text-align: center; width: 140px; cursor: pointer; }
 .envelope-item { position: absolute; }
 
-.add-zones{ display:grid; grid-template-columns:repeat(5, 1fr); border-top:1px solid var(--border); background:var(--bg2); }
-.add-zone{ height:70px; display:flex;flex-direction:column;align-items:center;justify-content:center; cursor:pointer; border:none;border-right:1px solid var(--border); background:transparent;color:var(--text3); font-family:var(--fh); font-size:0.85rem; gap:4px; z-index:10; }
+/* 2 BUTONLU DÜZENLİ TOOLBAR */
+.add-zones{ display:grid; grid-template-columns: 1fr 1fr; border-top:1px solid var(--border); background:var(--bg2); position: relative; }
+.add-zone{ height:60px; display:flex;flex-direction:column;align-items:center;justify-content:center; cursor:pointer; border:none; background:transparent;color:var(--text3); font-family:var(--fh); font-size:0.85rem; gap:3px; z-index:10; }
 .add-zone * { pointer-events: none; }
-.add-zone[data-type="foto"] { --fill-color: #ff3d6b; }
-.add-zone[data-type="soz"] { --fill-color: #7b5ef8; }
-.add-zone[data-type="mektup"] { --fill-color: #f4e8c1; }
-.add-zone[data-type="sayac"] { --fill-color: #00f2fe; }
-.add-zone[data-type="kapsul"] { --fill-color: #c4aaff; }
+.add-zone:first-child { border-right: 1px solid var(--border); --fill-color: #ff3d6b; }
+.add-zone:last-child { --fill-color: #7b5ef8; }
+
+/* 3 NOKTA AÇILIR MENÜ */
+.menu-popup {
+  position: absolute; bottom: 65px; right: 10px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px; display: none; flex-direction: column; gap: 6px; z-index: 300; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 160px;
+}
+.menu-popup.open { display: flex; }
+.menu-item { background: transparent; border: none; padding: 8px 10px; text-align: left; color: var(--text); font-family: var(--fb); font-size: 0.75rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
+.menu-item:hover { background: var(--surface2); color: var(--accent); }
 
 aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflow-y:auto; }
-.panel{ padding:16px; border-bottom:1px solid var(--border); }
-.panel-title{ font-family:var(--fd);font-size:1.05rem;font-style:italic;color:var(--text);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center; }
+.panel{ padding:14px; border-bottom:1px solid var(--border); }
+.panel-title{ font-family:var(--fd);font-size:1rem;font-style:italic;color:var(--text);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center; }
 
 .ambient-row{ display:flex; gap:6px; }
-.amb-btn{ flex:1; padding:8px 4px; background:var(--surface); border:1px solid var(--border); border-radius:4px; font-size:0.75rem; color:var(--text2); cursor:pointer; text-align:center; }
+.amb-btn{ flex:1; padding:7px 4px; background:var(--surface); border:1px solid var(--border); border-radius:4px; font-size:0.7rem; color:var(--text2); cursor:pointer; text-align:center; }
 .amb-btn.active { background: var(--accent); color: var(--bg); font-weight: 700; }
 
-.mini-list{ max-height:110px; overflow-y:auto; display:flex;flex-direction:column;gap:5px; }
-.mini-item{ background:var(--surface); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:0.75rem; display:flex;justify-content:space-between;align-items:center; }
+.mini-list{ max-height:100px; overflow-y:auto; display:flex;flex-direction:column;gap:5px; }
+.mini-item{ background:var(--surface); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:0.72rem; display:flex;justify-content:space-between;align-items:center; }
 
-.ai-panel{ padding:16px; border-bottom:1px solid var(--border); display:flex;flex-direction:column; flex:1; }
-.ai-chat-box{ flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px; max-height:160px; overflow-y:auto; display:flex;flex-direction:column;gap:8px; margin-bottom:8px; }
-.ai-msg{ font-size:0.78rem; padding:7px 9px; border-radius:6px; line-height:1.4; max-width:90%; }
+/* BÜYÜTÜLEBİLİR AI PANELİ */
+.ai-panel{ padding:14px; border-bottom:1px solid var(--border); display:flex;flex-direction:column; flex:1; transition: all 0.3s ease; }
+.ai-panel.expanded { position: fixed; inset: 20px; z-index: 900; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,0.9); }
+.ai-chat-box{ flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:8px; max-height:150px; overflow-y:auto; display:flex;flex-direction:column;gap:8px; margin-bottom:8px; }
+.ai-panel.expanded .ai-chat-box { max-height: calc(100vh - 200px); }
+.ai-msg{ font-size:0.75rem; padding:6px 8px; border-radius:6px; line-height:1.4; max-width:90%; word-break:break-word; }
 .ai-msg.user{ background:var(--surface2); color:var(--text); align-self:flex-end; }
 .ai-msg.assistant{ background:var(--surface); color:var(--text2); align-self:flex-start; border:1px solid var(--border); }
-.ai-input-row{ display:flex; gap:5px; }
-.ai-input{ flex:1; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:7px; font-size:0.75rem; color:var(--text); outline:none; }
-.ai-send-btn{ padding:7px 10px; background:var(--accent); border:none; border-radius:4px; color:var(--bg); font-weight:700; font-size:0.7rem; cursor:pointer; }
+.ai-msg img { width: 100%; max-height: 120px; object-fit: cover; border-radius: 4px; margin-top: 4px; }
+.ai-input-row{ display:flex; gap:5px; align-items:center; }
+.ai-input{ flex:1; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:6px; font-size:0.72rem; color:var(--text); outline:none; }
+.ai-send-btn{ padding:6px 9px; background:var(--accent); border:none; border-radius:4px; color:var(--bg); font-weight:700; font-size:0.68rem; cursor:pointer; }
 
+/* SPOTIFY BAR */
 .spotify-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #121212; border-top: 1px solid #282828;
-  display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 500; font-family: var(--fb); color: #fff;
+  position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #121212; border-top: 1px solid #282828;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 500; font-family: var(--fb); color: #fff;
 }
-.spotify-left { display: flex; align-items: center; gap: 12px; width: 250px; }
-.spotify-thumb { width: 50px; height: 50px; background: #282828; border-radius: 4px; object-fit: cover; }
+.spotify-left { display: flex; align-items: center; gap: 10px; width: 220px; }
+.spotify-thumb { width: 42px; height: 42px; background: #282828; border-radius: 4px; object-fit: cover; }
 .spotify-meta { display: flex; flex-direction: column; overflow: hidden; }
-.spotify-title { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.spotify-artist { font-size: 0.7rem; color: #b3b3b3; }
-
-.spotify-center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 500px; }
-.spotify-controls { display: flex; align-items: center; gap: 15px; }
-.spotify-btn { background: none; border: none; color: #b3b3b3; font-size: 1rem; cursor: pointer; transition: color 0.2s; }
+.spotify-title { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotify-artist { font-size: 0.65rem; color: #b3b3b3; }
+.spotify-center { display: flex; align-items: center; gap: 12px; }
+.spotify-btn { background: none; border: none; color: #b3b3b3; font-size: 0.9rem; cursor: pointer; transition: color 0.2s; }
 .spotify-btn:hover { color: #fff; }
-.spotify-btn.main { width: 32px; height: 32px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
-.spotify-btn.main:hover { transform: scale(1.05); }
-
-.spotify-right { display: flex; align-items: center; gap: 12px; width: 200px; justify-content: flex-end; }
-.spotify-video-modal { position: fixed; bottom: 85px; right: 20px; width: 320px; height: 180px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 600; display: none; }
+.spotify-btn.main { width: 30px; height: 30px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+.spotify-right { display: flex; align-items: center; gap: 10px; }
+.spotify-video-modal { position: fixed; bottom: 80px; right: 16px; width: 280px; height: 160px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 600; display: none; }
 .spotify-video-modal iframe { width: 100%; height: 100%; border: none; }
 
+/* STORY MODAL */
 .story-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(15px); }
 .story-overlay.open { display:flex; }
-.story-card { width: 340px; height: 580px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.story-card { width: 320px; height: 540px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 .story-progress-bar { display: flex; gap: 4px; padding: 12px 12px 0; position: absolute; top: 0; left: 0; right: 0; z-index: 20; }
 .story-progress-step { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
 .story-progress-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
 .story-content { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
 .story-content img, .story-content video { width: 100%; height: 100%; object-fit: cover; }
-.story-caption { position: absolute; bottom: 30px; left: 15px; right: 15px; background: rgba(0,0,0,0.6); padding: 12px; border-radius: 8px; backdrop-filter: blur(8px); color: #fff; font-family: var(--fh); font-size: 1.2rem; text-align: center; }
+.story-caption { position: absolute; bottom: 25px; left: 15px; right: 15px; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; backdrop-filter: blur(8px); color: #fff; font-family: var(--fh); font-size: 1.1rem; text-align: center; }
 .story-nav-left, .story-nav-right { position: absolute; top: 0; bottom: 0; width: 45%; z-index: 10; cursor: pointer; }
 .story-nav-left { left: 0; } .story-nav-right { right: 0; }
-.story-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 24px; cursor: pointer; z-index: 30; }
+.story-close { position: absolute; top: 15px; right: 15px; color: #fff; font-size: 22px; cursor: pointer; z-index: 30; }
 
 .overlay{ position:fixed;inset:0; background:rgba(0,0,0,.72); display:none;align-items:center;justify-content:center; z-index:700; backdrop-filter:blur(10px); }
 .overlay.open{display:flex;}
-.modal{ background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:340px; }
-.modal h3{ font-family:var(--fd);font-size:1.2rem;font-style:italic;color:var(--text);margin-bottom:14px; }
-.modal input,.modal textarea{ width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px; padding:10px;font-size:0.9rem;color:var(--text);outline:none;margin-bottom:10px;resize:none; }
+.modal{ background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;width:320px; }
+.modal h3{ font-family:var(--fd);font-size:1.1rem;font-style:italic;color:var(--text);margin-bottom:12px; }
+.modal input,.modal textarea{ width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px; padding:8px;font-size:0.85rem;color:var(--text);outline:none;margin-bottom:8px;resize:none; }
 .modal-btns{display:flex;gap:8px;justify-content:flex-end;}
-.m-cancel{ padding:8px 14px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer;font-size:0.75rem;}
-.m-ok{ padding:8px 18px;background:var(--accent);border:none;border-radius:4px;color:var(--bg);font-weight:700;cursor:pointer;font-size:0.75rem;}
+.m-cancel{ padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer;font-size:0.7rem;}
+.m-ok{ padding:6px 16px;background:var(--accent);border:none;border-radius:4px;color:var(--bg);font-weight:700;cursor:pointer;font-size:0.7rem;}
 
-.search-results { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-.search-item { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 6px; border-radius: 4px; cursor: pointer; border: 1px solid var(--border); }
+.search-results { max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.search-item { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 5px; border-radius: 4px; cursor: pointer; border: 1px solid var(--border); }
 .search-item:hover { background: var(--surface2); }
-.search-item img { width: 40px; height: 30px; object-fit: cover; border-radius: 2px; }
+.search-item img { width: 36px; height: 26px; object-fit: cover; border-radius: 2px; }
 
-.toast{ position:fixed;bottom:90px;right:20px; background:var(--surface);border:1px solid var(--border); border-radius:8px;padding:12px 16px;font-family:var(--fh);font-size:0.95rem;color:var(--text); z-index:1000;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast{ position:fixed;bottom:80px;right:20px; background:var(--surface);border:1px solid var(--border); border-radius:8px;padding:10px 14px;font-family:var(--fh);font-size:0.9rem;color:var(--text); z-index:1000;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
 </style>
 </head>
@@ -187,27 +201,33 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
       </div>
     </div>
 
+    <!-- DÜZENLİ TOOLBAR: FOTO/VİDEO TEK ALAN, DİĞERLERİ 3 NOKTADA -->
     <div class="add-zones">
-      <button class="add-zone" data-type="foto" onclick="triggerFileInput()">🎬 <span>Foto / Video</span></button>
-      <button class="add-zone" data-type="soz" onclick="openQuoteModal()">💬 <span>Söz</span></button>
-      <button class="add-zone" data-type="mektup" onclick="openLetterModal()">💌 <span>Mektup</span></button>
-      <button class="add-zone" data-type="sayac" onclick="openCountdownModal()">⏳ <span>Sayaç</span></button>
-      <button class="add-zone" data-type="kapsul" onclick="openStoryCapsule()">📦 <span>Anı Kapsülü</span></button>
+      <button class="add-zone" onclick="triggerFileInput()">🎬 <span>Foto / Video Ekle</span></button>
+      <button class="add-zone" onclick="toggleMenu(event)">••• <span>Diğer Seçenekler</span></button>
+    </div>
+
+    <!-- 3 NOKTA AÇILIR MENÜ -->
+    <div class="menu-popup" id="menu-popup">
+      <button class="menu-item" onclick="openQuoteModal(); closeMenu()">💬 Söz Ekle</button>
+      <button class="menu-item" onclick="openLetterModal(); closeMenu()">💌 Mektup Bırak</button>
+      <button class="menu-item" onclick="openCountdownModal(); closeMenu()">⏳ Geri Sayım</button>
+      <button class="menu-item" onclick="openStoryCapsule(); closeMenu()">📦 Anı Kapsülü</button>
     </div>
   </div>
 
   <aside class="sidebar">
     <div class="panel">
-      <h3 class="panel-title">🎵 Çalma Listesi <button onclick="openMusicModal()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.8rem;">+ Şarkı Ara</button></h3>
+      <h3 class="panel-title">🎵 Çalma Listesi <button onclick="openMusicModal()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.75rem;">+ Şarkı Ara</button></h3>
       <div class="mini-list" id="music-list"></div>
     </div>
 
     <div class="panel">
       <h3 class="panel-title">🎧 Ortam Sesleri</h3>
       <div class="ambient-row">
-        <button class="amb-btn" onclick="toggleAmb('rain', this)">🌧️ Yağmur</button>
-        <button class="amb-btn" onclick="toggleAmb('fire', this)">🔥 Şömine</button>
-        <button class="amb-btn" onclick="toggleAmb('cafe', this)">☕ Kafe</button>
+        <button class="amb-btn" id="btn-rain" onclick="toggleAmb('rain', this)">🌧️ Yağmur</button>
+        <button class="amb-btn" id="btn-fire" onclick="toggleAmb('fire', this)">🔥 Şömine</button>
+        <button class="amb-btn" id="btn-cafe" onclick="toggleAmb('cafe', this)">☕ Kafe</button>
       </div>
     </div>
 
@@ -216,442 +236,15 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
       <div class="mini-list" id="countdown-list"></div>
     </div>
 
-    <div class="ai-panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <!-- BÜYÜTÜLEBİLİR VE FOTOĞRAF YÜKLENEBİLİR YAPAY ZEKA PANELİ -->
+    <div class="ai-panel" id="ai-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
         <h3 class="panel-title" id="ai-title" style="margin:0;">✦ 67</h3>
-        <button onclick="openAiSettingsModal()" style="background:none;border:none;color:var(--text3);cursor:pointer;">⚙️</button>
+        <div style="display:flex;gap:6px;">
+          <button onclick="toggleAiExpand()" id="ai-expand-btn" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.8rem;" title="Büyüt/Küçült">🗖</button>
+          <button onclick="openAiSettingsModal()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.8rem;">⚙️</button>
+        </div>
       </div>
       <div class="ai-chat-box" id="ai-chat-box">
-        <div class="ai-msg assistant">Selam! Ben 67. Bana bir şeyler yazabilir veya çizdirebilirsin ✦</div>
+        <div class="ai-msg assistant">Selam! Ben 67. Bana fotoğraf yükleyebilir, soru sorabilir ya da çizdirebilirsin ✦</div>
       </div>
-      <div class="ai-input-row">
-        <input class="ai-input" id="ai-input" type="text" placeholder="Mesaj yaz veya çizdir..." onkeydown="if(event.key==='Enter')sendAiMsg()">
-        <button class="ai-send-btn" onclick="sendAiMsg()">YAZ</button>
-      </div>
-    </div>
-  </aside>
-</div>
-
-<div class="spotify-bar" id="spotify-bar" style="display:none;">
-  <div class="spotify-left">
-    <img id="sp-thumb" class="spotify-thumb" src="" alt="">
-    <div class="spotify-meta">
-      <span id="sp-title" class="spotify-title">Şarkı adı</span>
-      <span id="sp-artist" class="spotify-artist">Sanatçı</span>
-    </div>
-  </div>
-  <div class="spotify-center">
-    <div class="spotify-controls">
-      <button class="spotify-btn main" onclick="togglePlayPause()">▶ / ⏸</button>
-    </div>
-  </div>
-  <div class="spotify-right">
-    <button class="spotify-btn" onclick="toggleMusicVideo()">📺 Klip</button>
-    <button class="spotify-btn" onclick="stopMusic()">⏹️ Kapat</button>
-  </div>
-</div>
-
-<div class="spotify-video-modal" id="spotify-video-modal">
-  <iframe id="music-iframe" src="" allow="autoplay"></iframe>
-</div>
-
-<div class="story-overlay" id="story-overlay">
-  <span class="story-close" onclick="closeStoryCapsule()">✕</span>
-  <div class="story-card">
-    <div class="story-progress-bar" id="story-progress-bar"></div>
-    <div class="story-nav-left" onclick="prevStory()"></div>
-    <div class="story-nav-right" onclick="nextStory()"></div>
-    <div class="story-content" id="story-content"></div>
-    <div class="story-caption" id="story-caption"></div>
-  </div>
-</div>
-
-<input type="file" id="file-in" accept="image/*,video/*" multiple onchange="handleFiles(event)" style="display:none">
-
-<div class="overlay" id="ph-modal">
-  <div class="modal">
-    <h3>medyayı iğnele 📌</h3>
-    <input type="text" id="ph-caption" placeholder="başlık (isteğe bağlı)" maxlength="60">
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('ph-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmPhoto()">iğnele!</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="qu-modal">
-  <div class="modal">
-    <h3>havalı söz ✦</h3>
-    <textarea id="qu-text" placeholder="bir şeyler yaz..." maxlength="300" style="height:80px;"></textarea>
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('qu-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmQuote()">ekle!</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="music-modal">
-  <div class="modal" style="width:400px;">
-    <h3>YouTube'da Şarkı Ara 🎵</h3>
-    <input type="text" id="music-search-input" placeholder="Şarkı veya sanatçı adı yaz..." oninput="searchYouTubeSongs()">
-    <div class="search-results" id="search-results-box"></div>
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('music-modal')">kapat</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="letter-modal">
-  <div class="modal">
-    <h3>geleceğe mektup 💌</h3>
-    <input type="text" id="let-title" placeholder="Mektup Başlığı">
-    <textarea id="let-content" placeholder="Gelecekteki kendine ya da arkadaşına not..." style="height:70px;"></textarea>
-    <label style="font-size:0.75rem;color:var(--text2);">Açılacağı Tarih:</label>
-    <input type="date" id="let-date">
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('letter-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmLetter()">zarfı kilitle</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="cd-modal">
-  <div class="modal">
-    <h3>geri sayım ekle ⏳</h3>
-    <input type="text" id="cd-title" placeholder="Örn: Yılbaşı / Buluşma">
-    <input type="date" id="cd-date">
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('cd-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmCountdown()">başlat</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="ai-settings-modal">
-  <div class="modal">
-    <h3>yapay zeka ayarı ✦</h3>
-    <input type="text" id="ai-name-input" placeholder="Asistan Adı (Örn: 67)">
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('ai-settings-modal')">iptal</button>
-      <button class="m-ok" onclick="saveAiSettings()">kaydet</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const API = '';
-let aiName = '67';
-let pendingFile = null;
-let allMediaItems = [];
-
-let audioCtx = null;
-let currentAmbNode = null;
-
-function triggerFileInput() {
-  document.getElementById('file-in').click();
-}
-
-function toggleAmb(type, btn) {
-  if (currentAmbNode) { currentAmbNode.stop(); currentAmbNode = null; document.querySelectorAll('.amb-btn').forEach(b => b.classList.remove('active')); if (btn.classList.contains('active')) return; }
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const bufferSize = audioCtx.sampleRate * 2;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-  const whiteNoise = audioCtx.createBufferSource();
-  whiteNoise.buffer = noiseBuffer; whiteNoise.loop = true;
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
-  filter.frequency.setValueAtTime(type === 'rain' ? 800 : 400, audioCtx.currentTime);
-  const gainNode = audioCtx.createGain(); gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-  whiteNoise.connect(filter); filter.connect(gainNode); gainNode.connect(audioCtx.destination);
-  whiteNoise.start(); currentAmbNode = whiteNoise; btn.classList.add('active');
-}
-
-async function init() {
-  const savedTheme = localStorage.getItem('zw_theme') || 'midnight';
-  setTheme(savedTheme, document.querySelector(`[data-t="${savedTheme}"]`));
-  await Promise.all([loadPhotos(), loadQuotes(), loadLetters(), loadCountdowns(), loadMusic(), loadAiSettings()]);
-  updateEmpty();
-}
-
-function setTheme(name, btn) {
-  document.body.setAttribute('data-theme', name);
-  document.querySelectorAll('.th-btn').forEach(b => b.classList.remove('on'));
-  if (btn) btn.classList.add('on');
-  localStorage.setItem('zw_theme', name);
-}
-
-function makeDraggable(el, id, endpoint) {
-  let isDragging = false, startX, startY, initialX, initialY;
-  el.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'VIDEO') return;
-    isDragging = true; startX = e.clientX; startY = e.clientY; initialX = el.offsetLeft; initialY = el.offsetTop; el.style.zIndex = 100;
-  });
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    el.style.left = (initialX + (e.clientX - startX)) + 'px';
-    el.style.top = (initialY + (e.clientY - startY)) + 'px';
-  });
-  document.addEventListener('mouseup', () => {
-    if (!isDragging) return;
-    isDragging = false; el.style.zIndex = 10;
-    fetch(`${API}/api/${endpoint}/${id}/pos`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ x: el.offsetLeft, y: el.offsetTop }) });
-  });
-}
-
-async function loadPhotos() {
-  const res = await fetch(`${API}/api/photos`);
-  allMediaItems = await res.json();
-  allMediaItems.forEach(renderPhoto);
-}
-
-function handleFiles(e) {
-  if (e.target.files[0]) {
-    pendingFile = e.target.files[0];
-    document.getElementById('ph-caption').value = '';
-    document.getElementById('ph-modal').classList.add('open');
-  }
-  e.target.value = '';
-}
-
-async function confirmPhoto() {
-  if (!pendingFile) return;
-  const caption = document.getElementById('ph-caption').value.trim();
-  const fd = new FormData(); fd.append('image', pendingFile); fd.append('caption', caption);
-  closeModal('ph-modal'); showToast('medya sıkıştırılıp yükleniyor... 📌');
-  const res = await fetch(`${API}/api/photos`, { method: 'POST', body: fd });
-  if (res.ok) {
-    const item = await res.json();
-    allMediaItems.push(item); renderPhoto(item); updateEmpty(); showToast('iğnelendi! 📌');
-  }
-  pendingFile = null;
-}
-
-function renderPhoto(p) {
-  const items = document.getElementById('board-items');
-  const el = document.createElement('div');
-  el.className = 'pinned-photo' + (p.taped ? ' taped' : '');
-  el.style.left = (p.x || (Math.random() * 400 + 50)) + 'px';
-  el.style.top = (p.y || (Math.random() * 300 + 50)) + 'px';
-  el.style.setProperty('--rot', p.rot + 'deg');
-  const mediaHtml = p.media_type === 'video' ? `<video src="${p.url}" autoplay loop muted playsinline controls></video>` : `<img src="${p.url}" alt="" loading="lazy">`;
-  el.innerHTML = `<div class="pin-tack"><div class="pin-head"></div><div class="pin-shaft"></div></div><button class="photo-del" onclick="delPhoto('${p.id}',this)">✕</button><div class="photo-frame">${mediaHtml}${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}</div>`;
-  items.appendChild(el); makeDraggable(el, p.id, 'photos');
-}
-
-async function delPhoto(id, btn) {
-  await fetch(`${API}/api/photos/${id}`, { method: 'DELETE' });
-  btn.closest('.pinned-photo').remove(); updateEmpty();
-}
-
-function openMusicModal() { document.getElementById('music-modal').classList.add('open'); document.getElementById('music-search-input').value = ''; document.getElementById('search-results-box').innerHTML = ''; }
-
-let searchTimeout = null;
-function searchYouTubeSongs() {
-  clearTimeout(searchTimeout);
-  const q = document.getElementById('music-search-input').value.trim();
-  if (!q) { document.getElementById('search-results-box').innerHTML = ''; return; }
-  searchTimeout = setTimeout(async () => {
-    const res = await fetch(`${API}/api/youtube/search?q=${encodeURIComponent(q)}`);
-    const results = await res.json();
-    const box = document.getElementById('search-results-box');
-    box.innerHTML = '';
-    results.forEach(song => {
-      const div = document.createElement('div');
-      div.className = 'search-item';
-      div.innerHTML = `<img src="${song.thumb}"><div><div style="font-size:0.8rem;font-weight:600;">${esc(song.title)}</div><div style="font-size:0.65rem;color:#aaa;">${esc(song.channel)}</div></div>`;
-      div.onclick = () => addSongToPlaylist(song);
-      box.appendChild(div);
-    });
-  }, 400);
-}
-
-async function addSongToPlaylist(song) {
-  closeModal('music-modal');
-  const res = await fetch(`${API}/api/playlist`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(song)
-  });
-  if (res.ok) {
-    loadMusic();
-    playMusic(song.videoId, song.title, song.channel, song.thumb);
-    showToast('şarkı eklendi 🎵');
-  }
-}
-
-async function loadMusic() {
-  const res = await fetch(`${API}/api/playlist`);
-  const list = await res.json();
-  const box = document.getElementById('music-list');
-  box.innerHTML = '';
-  list.forEach(track => {
-    const div = document.createElement('div');
-    div.className = 'mini-item';
-    div.innerHTML = `<span onclick="playMusic('${track.videoId}', '${esc(track.title)}', '${esc(track.channel)}', '${track.thumb}')" style="cursor:pointer;">▶️ ${esc(track.title)}</span><button onclick="delMusic('${track.videoId}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button>`;
-    box.appendChild(div);
-  });
-}
-
-function playMusic(videoId, title, channel, thumb) {
-  document.getElementById('spotify-bar').style.display = 'flex';
-  document.getElementById('sp-title').textContent = title;
-  document.getElementById('sp-artist').textContent = channel || 'YouTube Music';
-  if (thumb) document.getElementById('sp-thumb').src = thumb;
-  document.getElementById('music-iframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-}
-
-function toggleMusicVideo() {
-  const modal = document.getElementById('spotify-video-modal');
-  modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
-
-function togglePlayPause() {
-  const iframe = document.getElementById('music-iframe');
-  iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-}
-
-function stopMusic() {
-  document.getElementById('spotify-bar').style.display = 'none';
-  document.getElementById('spotify-video-modal').style.display = 'none';
-  document.getElementById('music-iframe').src = '';
-}
-
-async function delMusic(videoId) {
-  await fetch(`${API}/api/playlist/${videoId}`, { method: 'DELETE' });
-  loadMusic();
-}
-
-let currentStoryIdx = 0;
-let storyTimer = null;
-
-function openStoryCapsule() {
-  if (allMediaItems.length === 0) return alert('Anı Kapsülü için panoya en az 1 medya eklemelisin!');
-  currentStoryIdx = 0;
-  document.getElementById('story-overlay').classList.add('open');
-  setupStories();
-}
-
-function setupStories() {
-  const bar = document.getElementById('story-progress-bar');
-  bar.innerHTML = '';
-  allMediaItems.forEach((_, idx) => {
-    bar.innerHTML += `<div class="story-progress-step"><div class="story-progress-fill" id="story-fill-${idx}"></div></div>`;
-  });
-  showStory(currentStoryIdx);
-}
-
-function showStory(idx) {
-  if (idx < 0 || idx >= allMediaItems.length) { closeStoryCapsule(); return; }
-  currentStoryIdx = idx;
-  const item = allMediaItems[idx];
-  const box = document.getElementById('story-content');
-  const cap = document.getElementById('story-caption');
-  
-  box.innerHTML = item.media_type === 'video' ? `<video src="${item.url}" autoplay loop playsinline></video>` : `<img src="${item.url}">`;
-  cap.textContent = item.caption || 'Anı ✦';
-
-  allMediaItems.forEach((_, i) => {
-    const el = document.getElementById(`story-fill-${i}`);
-    if (el) el.style.width = i < idx ? '100%' : '0%';
-  });
-
-  if (storyTimer) clearInterval(storyTimer);
-  let pct = 0;
-  const activeFill = document.getElementById(`story-fill-${idx}`);
-  storyTimer = setInterval(() => {
-    pct += 2;
-    if (activeFill) activeFill.style.width = pct + '%';
-    if (pct >= 100) { clearInterval(storyTimer); nextStory(); }
-  }, 100);
-}
-
-function nextStory() { showStory(currentStoryIdx + 1); }
-function prevStory() { showStory(currentStoryIdx - 1); }
-function closeStoryCapsule() {
-  if (storyTimer) clearInterval(storyTimer);
-  document.getElementById('story-overlay').classList.remove('open');
-}
-
-async function loadQuotes() {
-  const res = await fetch(`${API}/api/quotes`);
-  const quotes = await res.json();
-  quotes.forEach(renderQuote);
-}
-
-function openQuoteModal() { document.getElementById('qu-modal').classList.add('open'); }
-async function confirmQuote() {
-  const text = document.getElementById('qu-text').value.trim();
-  if (!text) return; closeModal('qu-modal');
-  const res = await fetch(`${API}/api/quotes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
-  if (res.ok) { const q = await res.json(); renderQuote(q); updateEmpty(); showToast('söz eklendi ✦'); }
-}
-
-function renderQuote(q) {
-  const items = document.getElementById('board-items');
-  const el = document.createElement('div');
-  el.className = `q-bubble ${q.style || ''}`;
-  el.style.left = (q.x || (Math.random() * 400 + 50)) + 'px'; el.style.top = (q.y || (Math.random() * 300 + 50)) + 'px';
-  el.innerHTML = `<div class="q-text">${esc(q.text)}</div><div class="q-footer"><span class="q-stars">★★★</span><button class="q-del" onclick="delQuote('${q.id}',this)">✕</button></div>`;
-  items.appendChild(el); makeDraggable(el, q.id, 'quotes');
-}
-async function delQuote(id, btn) { await fetch(`${API}/api/quotes/${id}`, { method: 'DELETE' }); btn.closest('.q-bubble').remove(); updateEmpty(); }
-
-function openLetterModal() { document.getElementById('letter-modal').classList.add('open'); }
-async function confirmLetter() {
-  const title = document.getElementById('let-title').value.trim();
-  const content = document.getElementById('let-content').value.trim();
-  const unlockDate = document.getElementById('let-date').value;
-  if (!title || !content || !unlockDate) return; closeModal('letter-modal');
-  const res = await fetch(`${API}/api/letters`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, content, unlockDate }) });
-  if (res.ok) { const l = await res.json(); renderLetter(l); updateEmpty(); showToast('mektup mühürlendi 💌'); }
-}
-async function loadLetters() { const res = await fetch(`${API}/api/letters`); const letters = await res.json(); letters.forEach(renderLetter); }
-function renderLetter(l) {
-  const items = document.getElementById('board-items');
-  const el = document.createElement('div'); el.className = 'envelope-item'; el.style.left = (Math.random() * 400 + 50) + 'px'; el.style.top = (Math.random() * 300 + 50) + 'px';
-  el.innerHTML = `<div class="envelope-box" onclick="alert('💌 Mektup: ${esc(l.title)}\\n\\n${esc(l.content)}')">💌 ${esc(l.title)}</div><button class="env-del" onclick="delLetter('${l.id}', this)">✕</button>`;
-  items.appendChild(el);
-}
-async function delLetter(id, btn) { await fetch(`${API}/api/letters/${id}`, { method: 'DELETE' }); btn.closest('.envelope-item').remove(); updateEmpty(); }
-
-function openCountdownModal() { document.getElementById('cd-modal').classList.add('open'); }
-async function confirmCountdown() {
-  const title = document.getElementById('cd-title').value.trim();
-  const targetDate = document.getElementById('cd-date').value;
-  if (!title || !targetDate) return; closeModal('cd-modal');
-  const res = await fetch(`${API}/api/countdowns`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, targetDate }) });
-  if (res.ok) loadCountdowns();
-}
-async function loadCountdowns() {
-  const res = await fetch(`${API}/api/countdowns`);
-  const list = await res.json(); const box = document.getElementById('countdown-list'); box.innerHTML = '';
-  list.forEach(c => {
-    const daysLeft = Math.ceil((new Date(c.targetDate) - new Date()) / (1000 * 60 * 60 * 24));
-    box.innerHTML += `<div class="mini-item"><span><b>${esc(c.title)}</b>: ${daysLeft > 0 ? daysLeft + ' gün kaldı' : 'Vakti geldi!'}</span><button onclick="delCd('${c.id}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button></div>`;
-  });
-}
-async function delCd(id) { await fetch(`${API}/api/countdowns/${id}`, { method: 'DELETE' }); loadCountdowns(); }
-
-async function loadAiSettings() { const res = await fetch(`${API}/api/settings`); const data = await res.json(); if (data.aiName) { aiName = data.aiName; document.getElementById('ai-title').textContent = '✦ ' + aiName; } }
-function openAiSettingsModal() { document.getElementById('ai-name-input').value = aiName; document.getElementById('ai-settings-modal').classList.add('open'); }
-async function saveAiSettings() { const newName = document.getElementById('ai-name-input').value.trim(); if (!newName) return; aiName = newName; document.getElementById('ai-title').textContent = '✦ ' + aiName; closeModal('ai-settings-modal'); await fetch(`${API}/api/settings`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ aiName }) }); }
-async function sendAiMsg() {
-  const input = document.getElementById('ai-input'); const prompt = input.value.trim(); if (!prompt) return;
-  const chatBox = document.getElementById('ai-chat-box'); chatBox.innerHTML += `<div class="ai-msg user">${esc(prompt)}</div>`; input.value = ''; chatBox.scrollTop = chatBox.scrollHeight;
-  const loading = document.createElement('div'); loading.className = 'ai-msg assistant'; loading.textContent = 'Düşünüyor...'; chatBox.appendChild(loading);
-  const res = await fetch(`${API}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, aiName }) });
-  const data = await res.json(); loading.innerHTML = esc(data.text) + (data.image ? `<br><img src="${data.image}">` : ''); chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-function updateEmpty() { document.getElementById('board-empty').style.display = document.getElementById('board-items').children.length > 1 ? 'none' : 'flex'; }
-function esc(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
-
-init();
-</script>
-</body>
-</html>

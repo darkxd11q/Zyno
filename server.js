@@ -95,19 +95,18 @@ app.patch('/api/settings', async (req, res) => {
   res.json(db.settings);
 });
 
-// YouTube Arama API (Link yerine aratıp bulmak için)
+// YouTube Arama API (Daha kararlı alternatif endpoint)
 app.get('/api/youtube/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.json([]);
   try {
-    // Invidious API kullanarak anahtarsız YouTube araması
-    const response = await fetch(`https://vid.puffyan.us/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
+    const response = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=videos`);
     const data = await response.json();
-    const results = (data || []).slice(0, 5).map(item => ({
-      videoId: item.videoId,
+    const results = (data.items || []).slice(0, 6).map(item => ({
+      videoId: item.url.split('/watch?v=')[1] || item.videoId,
       title: item.title,
-      channel: item.author,
-      thumb: item.videoThumbnails?.[0]?.url || ''
+      channel: item.uploaderName,
+      thumb: item.thumbnail || ''
     }));
     res.json(results);
   } catch (e) {
@@ -213,7 +212,7 @@ app.delete('/api/letters/:id', async (req, res) => {
 });
 
 app.get('/api/countdowns', async (_, res) => { res.json((await readDB()).countdowns || []); });
-app.post('/api/countdowns', async (_, res) => {
+app.post('/api/countdowns', async (req, res) => {
   const db = await readDB(); if (!db.countdowns) db.countdowns = [];
   const c = { id: uuidv4(), ...req.body }; db.countdowns.push(c); await writeDB(db); res.status(201).json(c);
 });
@@ -222,7 +221,7 @@ app.delete('/api/countdowns/:id', async (req, res) => {
 });
 
 app.get('/api/capsules', async (_, res) => { res.json((await readDB()).capsules || []); });
-app.post('/api/capsules', async (_, res) => {
+app.post('/api/capsules', async (req, res) => {
   const db = await readDB(); if (!db.capsules) db.capsules = [];
   const cap = { id: uuidv4(), ...req.body }; db.capsules.push(cap); await writeDB(db); res.status(201).json(cap);
 });
