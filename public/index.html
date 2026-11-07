@@ -22,190 +22,135 @@
   --text2:     #9988cc;
   --text3:     #554e88;
   --pin:       #ff3d6b;
-  --shadow:    0 8px 32px rgba(123,94,248,0.22);
   --cork:      linear-gradient(135deg,#161628 0%,#1a1830 100%);
-  --tape:      rgba(196,170,255,0.14);
   --fd:        'Playfair Display', serif;
   --fh:        'Caveat', cursive;
   --fb:        'DM Sans', sans-serif;
-  --fbb:       'Bebas Neue', sans-serif;
   --bubble-bg: #1e1c34;
-  --bubble-alt:#221e3a;
 }
 [data-theme="pastel"] {
-  --bg:        #fdf5f0; --bg2: #fef9f5; --bg3: #fff0e8; --surface: #fff6f1; --surface2: #ffe8de;
-  --border:    #f0cfc2; --accent: #d4789a; --accent2: #b55a80; --accent3: #f0a882; --text: #4a2e3c;
-  --text2:     #8a6070; --text3: #c0a0aa; --pin: #d05878; --cork: linear-gradient(135deg,#fef0e8 0%,#fde8e0 100%);
-  --bubble-bg: #fff0ea; --bubble-alt:#ffe4da;
+  --bg: #fdf5f0; --bg2: #fef9f5; --bg3: #fff0e8; --surface: #fff6f1; --surface2: #ffe8de;
+  --border: #f0cfc2; --accent: #d4789a; --accent2: #b55a80; --accent3: #f0a882; --text: #4a2e3c;
+  --text2: #8a6070; --text3: #c0a0aa; --pin: #d05878; --cork: linear-gradient(135deg,#fef0e8 0%,#fde8e0 100%);
+  --bubble-bg: #fff0ea;
 }
 [data-theme="minimal"] {
-  --bg:        #f6f5f2; --bg2: #fafaf8; --bg3: #efefec; --surface: #ffffff; --surface2: #f0efec;
-  --border:    #dddbd8; --accent: #1a1a1a; --accent2: #444444; --accent3: #888888; --text: #111111;
-  --text2:     #555555; --text3: #bbbbbb; --pin: #222222; --cork: linear-gradient(135deg,#edece8 0%,#e8e6e2 100%);
-  --bubble-bg: #f8f7f4; --bubble-alt:#f0efe9;
+  --bg: #f6f5f2; --bg2: #fafaf8; --bg3: #efefec; --surface: #ffffff; --surface2: #f0efec;
+  --border: #dddbd8; --accent: #1a1a1a; --accent2: #444444; --accent3: #888888; --text: #111111;
+  --text2: #555555; --text3: #bbbbbb; --pin: #222222; --cork: linear-gradient(135deg,#edece8 0%,#e8e6e2 100%);
+  --bubble-bg: #f8f7f4;
 }
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{
-  font-family:var(--fb); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; transition:background .7s,color .4s;
-}
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:var(--bg2);}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+body{ font-family:var(--fb); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
 
 header{
   position:sticky;top:0;z-index:200; height:58px;padding:0 32px;
   display:flex;align-items:center;justify-content:space-between;
   background:var(--bg);border-bottom:1px solid var(--border); backdrop-filter:blur(24px);
 }
-.logo{
-  font-family:var(--fd); font-size:1.45rem; font-style:italic; color:var(--text);
-  display:flex;align-items:center;gap:6px; user-select:none;
-}
+.logo{ font-family:var(--fd); font-size:1.45rem; font-style:italic; color:var(--text); display:flex;align-items:center;gap:6px; }
 .logo em{color:var(--accent);font-style:normal;}
-.logo .dot{color:var(--accent3);font-size:1.6rem;line-height:1;}
 
-.theme-bar{
-  display:flex;align-items:center;gap:6px; background:var(--surface);
-  border:1px solid var(--border); border-radius:50px;padding:5px 8px;
-}
-.th-btn{
-  border:none;cursor:pointer;border-radius:50px;padding:5px 13px;
-  font-family:var(--fb);font-size:.7rem;font-weight:500;text-transform:uppercase;
-  color:var(--text3);background:transparent;transition:all .25s;
-}
-.th-btn:hover{color:var(--text);}
+.theme-bar{ display:flex;align-items:center;gap:6px; background:var(--surface); border:1px solid var(--border); border-radius:50px;padding:5px 8px; }
+.th-btn{ border:none;cursor:pointer;border-radius:50px;padding:5px 13px; font-family:var(--fb);font-size:.7rem;font-weight:500; color:var(--text3);background:transparent;transition:all .25s; }
 .th-btn.on{background:var(--accent);color:var(--bg);font-weight:700;}
 
-.wrapper{
-  display:grid; grid-template-columns:1fr 340px; min-height:calc(100vh - 58px);
+.wrapper{ display:grid; grid-template-columns:1fr 340px; min-height:calc(100vh - 58px); }
+.board-col{ display:grid; grid-template-rows:1fr auto; border-right:1px solid var(--border); }
+.corkboard{ padding:0; background:var(--cork); min-height:520px; position:relative; overflow:hidden; }
+.board-items{ position:relative; width:100%; height:100%; min-height:600px; }
+.board-empty{ position:absolute;inset:0; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px; color:var(--text3);font-family:var(--fh);font-size:1.2rem; pointer-events:none; }
+
+/* ════════════════════ LIQUID FILL COLOR ANIMATIONS ════════════════════ */
+.pinned-photo, .q-bubble, .envelope-item, .add-zone, .amb-btn {
+  position: relative; overflow: hidden; z-index: 1;
+}
+.pinned-photo::before, .q-bubble::before, .envelope-item::before, .add-zone::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: var(--fill-color, var(--accent)); opacity: 0.25;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1; pointer-events: none; border-radius: inherit;
+}
+.pinned-photo:active::before, .q-bubble:active::before, .envelope-item:active::before, .add-zone:active::before,
+.add-zone:hover::before {
+  transform: translateX(100%);
 }
 
-.board-col{
-  display:grid; grid-template-rows:1fr auto; border-right:1px solid var(--border);
-}
-
-/* Corkboard with absolute positioning for draggable items */
-.corkboard{
-  padding:0; background:var(--cork); min-height:520px; position:relative; overflow:hidden;
-}
-
-.board-items{
-  position:relative; width:100%; height:100%; min-height:600px;
-}
-
-.board-empty{
-  position:absolute;inset:0; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-  color:var(--text3);font-family:var(--fh);font-size:1.2rem; pointer-events:none;opacity:.7; z-index:0;
-}
-
-/* Draggable Items */
-.pinned-photo, .q-bubble, .envelope-item {
-  position: absolute; cursor: grab; user-select: none; z-index: 10;
-  transition: box-shadow .2s;
-}
-.pinned-photo:active, .q-bubble:active, .envelope-item:active { cursor: grabbing; }
-
-.pinned-photo{
-  animation:pinDrop .45s cubic-bezier(.34,1.56,.64,1) both;
-  --rot:2deg; width: 160px;
-}
-@keyframes pinDrop{
-  from{transform:scale(.4) rotate(var(--rot));opacity:0;}
-  to{transform:scale(1) rotate(var(--rot));opacity:1;}
-}
-
-.photo-frame{
-  background:#fff; padding:9px 9px 30px; transform:rotate(var(--rot));
-  box-shadow:3px 5px 18px rgba(0,0,0,.3); max-width:158px;
-}
-.photo-frame img{ width:140px;height:140px;object-fit:cover;display:block;pointer-events:none; }
+.pinned-photo { --fill-color: #ff3d6b; position: absolute; cursor: grab; width: 160px; }
+.photo-frame{ background:#fff; padding:9px 9px 30px; transform:rotate(var(--rot)); box-shadow:3px 5px 18px rgba(0,0,0,.3); }
+.photo-frame img, .photo-frame video { width:140px;height:140px;object-fit:cover;display:block; }
 .photo-caption{ font-family:var(--fh);font-size:.8rem;color:#555;text-align:center;padding:5px 2px 0; }
 
-.pin-tack{
-  position:absolute;top:-12px;left:50%;transform:translateX(-50%);z-index:30;pointer-events:none;
-}
-.pin-head{
-  width:14px;height:14px;background:radial-gradient(circle at 38% 32%,#ff99aa,var(--pin));
-  border-radius:50%;border:1.5px solid rgba(0,0,0,.22);
-}
-.pin-shaft{ width:2px;height:9px;background:linear-gradient(to bottom,#ccc,#888);margin:0 auto; }
-
-.photo-del, .q-del, .env-del{
-  position:absolute;top:-7px;right:-7px; width:22px;height:22px; background:#ff3d6b;
-  border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:none;
-  align-items:center;justify-content:center;z-index:40;
-}
+.pin-tack{ position:absolute;top:-12px;left:50%;transform:translateX(-50%);z-index:30; }
+.pin-head{ width:14px;height:14px;background:radial-gradient(circle at 38% 32%,#ff99aa,var(--pin)); border-radius:50%; }
+.pin-shaft{ width:2px;height:9px;background:#888;margin:0 auto; }
+.photo-del, .q-del, .env-del{ position:absolute;top:-7px;right:-7px; width:22px;height:22px; background:#ff3d6b; border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:40; }
 .pinned-photo:hover .photo-del, .q-bubble:hover .q-del, .envelope-item:hover .env-del { display:flex; }
 
-.q-bubble{
-  background:var(--bubble-bg); border:1px solid var(--border); border-radius:20px;
-  padding:15px 18px 12px; max-width:260px; min-width:160px;
-}
-.q-text{ font-family:var(--fh);font-size:1.05rem;color:var(--text);line-height:1.55; }
+.q-bubble{ --fill-color: #7b5ef8; position: absolute; cursor: grab; background:var(--bubble-bg); border:1px solid var(--border); border-radius:20px; padding:15px 18px; max-width:260px; min-width:160px; }
+.q-text{ font-family:var(--fh);font-size:1.05rem;color:var(--text); }
 .q-footer{ display:flex;align-items:center;justify-content:space-between;margin-top:7px; }
-.q-stars{ color:var(--accent3);font-size:.72rem;letter-spacing:2px; }
+.q-stars{ color:var(--accent3);font-size:.72rem; }
 
-/* Envelope Item */
-.envelope-box {
-  background: #f4e8c1; color: #4a3b2c; padding: 12px 18px; border-radius: 6px;
-  font-family: var(--fh); font-size: 1.1rem; box-shadow: 3px 5px 15px rgba(0,0,0,0.25);
-  border: 1px dashed #c2b084; text-align: center; width: 150px;
-}
+.envelope-box { --fill-color: #f4e8c1; background: #f4e8c1; color: #4a3b2c; padding: 12px 18px; border-radius: 6px; font-family: var(--fh); font-size: 1.1rem; text-align: center; width: 150px; cursor: pointer; }
+.envelope-item { position: absolute; }
 
+/* TOOLBAR & BUTTONS WITH CUSTOM COLORS */
 .add-zones{ display:grid; grid-template-columns:repeat(5, 1fr); border-top:1px solid var(--border); background:var(--bg2); }
-.add-zone{
-  height:70px; display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer; border:none;border-right:1px solid var(--border); background:transparent;color:var(--text3);
-  font-family:var(--fh); font-size:0.85srem; gap:3px; transition:all .2s;
-}
-.add-zone:hover{ background:var(--surface); color:var(--accent); }
+.add-zone{ height:70px; display:flex;flex-direction:column;align-items:center;justify-content:center; cursor:pointer; border:none;border-right:1px solid var(--border); background:transparent;color:var(--text3); font-family:var(--fh); font-size:0.85rem; gap:4px; }
+.add-zone[data-type="foto"] { --fill-color: #ff3d6b; }
+.add-zone[data-type="soz"] { --fill-color: #7b5ef8; }
+.add-zone[data-type="mektup"] { --fill-color: #f4e8c1; }
+.add-zone[data-type="sayac"] { --fill-color: #00f2fe; }
+.add-zone[data-type="kapsul"] { --fill-color: #c4aaff; }
 
 aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflow-y:auto; }
+.panel{ padding:16px; border-bottom:1px solid var(--border); }
+.panel-title{ font-family:var(--fd);font-size:1.05rem;font-style:italic;color:var(--text);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center; }
 
-.panel{ padding:18px; border-bottom:1px solid var(--border); flex-shrink:0; }
-.panel-title{ font-family:var(--fd);font-size:1.1rem;font-style:italic;color:var(--text);margin-bottom:10px;display:flex;justify-content:between;align-items:center; }
+.ambient-row{ display:flex; gap:6px; }
+.amb-btn{ flex:1; padding:8px 4px; background:var(--surface); border:1px solid var(--border); border-radius:4px; font-size:0.75rem; color:var(--text2); cursor:pointer; text-align:center; }
+.amb-btn.active { background: var(--accent); color: var(--bg); font-weight: 700; }
 
-/* Ambient Sounds Bar */
-.ambient-row{ display:flex; gap:6px; margin-bottom:10px; }
-.amb-btn{
-  flex:1; padding:6px; background:var(--surface); border:1px solid var(--border);
-  border-radius:4px; font-size:0.72rem; color:var(--text2); cursor:pointer; text-align:center;
-}
-.amb-btn.active { background: var(--accent); color: var(--bg); font-weight: 700; border-color: var(--accent); }
+/* MUSIC PLAYER PANEL */
+.player-box { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px; }
+.player-video-container { width:100%; height:140px; background:#000; border-radius:6px; overflow:hidden; display:none; }
+.player-video-container iframe { width:100%; height:100%; border:none; }
 
-/* Countdowns & Capsules Lists */
-.mini-list{ max-height:130px; overflow-y:auto; display:flex;flex-direction:column;gap:5px; margin-bottom:8px; }
-.mini-item{ background:var(--surface); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:0.75rem; display:flex;justify-content:between;align-items:center; }
+.mini-list{ max-height:110px; overflow-y:auto; display:flex;flex-direction:column;gap:5px; }
+.mini-item{ background:var(--surface); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:0.75rem; display:flex;justify-content:space-between;align-items:center; }
 
-/* AI Panel */
-.ai-panel{ padding:18px; border-bottom:1px solid var(--border); display:flex;flex-direction:column; flex:1; min-height:260px; }
-.ai-chat-box{
-  flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px;
-  padding:10px; max-height:180px; overflow-y:auto; display:flex;flex-direction:column;gap:8px; margin-bottom:8px;
-}
-.ai-msg{ font-size:0.78rem; padding:7px 9px; border-radius:6px; line-height:1.4; max-width:90%; word-break:break-word; }
+.ai-panel{ padding:16px; border-bottom:1px solid var(--border); display:flex;flex-direction:column; flex:1; }
+.ai-chat-box{ flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:10px; max-height:160px; overflow-y:auto; display:flex;flex-direction:column;gap:8px; margin-bottom:8px; }
+.ai-msg{ font-size:0.78rem; padding:7px 9px; border-radius:6px; line-height:1.4; max-width:90%; }
 .ai-msg.user{ background:var(--surface2); color:var(--text); align-self:flex-end; }
 .ai-msg.assistant{ background:var(--surface); color:var(--text2); align-self:flex-start; border:1px solid var(--border); }
-.ai-msg img{ width:100%; max-height:120px; object-fit:cover; border-radius:4px; margin-top:5px; display:block; }
-
-.ai-input-row{ display:flex; gap:5px; align-items:center; }
-.ai-input{
-  flex:1; background:var(--surface); border:1px solid var(--border); border-radius:4px;
-  padding:7px 9px; font-size:0.75rem; color:var(--text); outline:none;
-}
+.ai-input-row{ display:flex; gap:5px; }
+.ai-input{ flex:1; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:7px; font-size:0.75rem; color:var(--text); outline:none; }
 .ai-send-btn{ padding:7px 10px; background:var(--accent); border:none; border-radius:4px; color:var(--bg); font-weight:700; font-size:0.7rem; cursor:pointer; }
+
+/* INSTAGRAM STORIES CAPSULE MODAL */
+.story-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(15px); }
+.story-overlay.open { display:flex; }
+.story-card { width: 340px; height: 580px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.story-progress-bar { display: flex; gap: 4px; padding: 12px 12px 0; position: absolute; top: 0; left: 0; right: 0; z-index: 20; }
+.story-progress-step { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+.story-progress-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
+.story-content { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+.story-content img, .story-content video { width: 100%; height: 100%; object-fit: cover; }
+.story-caption { position: absolute; bottom: 30px; left: 15px; right: 15px; background: rgba(0,0,0,0.6); padding: 12px; border-radius: 8px; backdrop-filter: blur(8px); color: #fff; font-family: var(--fh); font-size: 1.2rem; text-align: center; }
+.story-nav-left, .story-nav-right { position: absolute; top: 0; bottom: 0; width: 45%; z-index: 10; cursor: pointer; }
+.story-nav-left { left: 0; }
+.story-nav-right { right: 0; }
+.story-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 24px; cursor: pointer; z-index: 30; }
 
 /* Modals */
 .overlay{ position:fixed;inset:0; background:rgba(0,0,0,.72); display:none;align-items:center;justify-content:center; z-index:500; backdrop-filter:blur(10px); }
 .overlay.open{display:flex;}
-.modal{ background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:320px; box-shadow:0 28px 70px rgba(0,0,0,.55); }
+.modal{ background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;width:320px; }
 .modal h3{ font-family:var(--fd);font-size:1.2rem;font-style:italic;color:var(--text);margin-bottom:14px; }
-.modal input,.modal textarea{
-  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;
-  padding:10px;font-size:0.9rem;color:var(--text);outline:none;margin-bottom:10px;resize:none;
-}
+.modal input,.modal textarea{ width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px; padding:10px;font-size:0.9rem;color:var(--text);outline:none;margin-bottom:10px;resize:none; }
 .modal-btns{display:flex;gap:8px;justify-content:flex-end;}
 .m-cancel{ padding:8px 14px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer;font-size:0.75rem;}
 .m-ok{ padding:8px 18px;background:var(--accent);border:none;border-radius:4px;color:var(--bg);font-weight:700;cursor:pointer;font-size:0.75rem;}
@@ -227,28 +172,41 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
 
 <div class="wrapper">
   <div class="board-col">
-    <!-- Corkboard -->
     <div class="corkboard" id="corkboard">
       <div class="board-items" id="board-items">
         <div class="board-empty" id="board-empty">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <span>burası senin dünyan ✦ (eşyaları sürükleyebilirsin)</span>
+          <span>burası senin dünyan ✦</span>
         </div>
       </div>
     </div>
 
-    <!-- Action Toolbar (Add Zones) -->
     <div class="add-zones">
-      <button class="add-zone" onclick="document.getElementById('file-in').click()">📷 <span>Foto</span></button>
-      <button class="add-zone" onclick="openQuoteModal()">💬 <span>Söz</span></button>
-      <button class="add-zone" onclick="openLetterModal()">💌 <span>Mektup</span></button>
-      <button class="add-zone" onclick="openCountdownModal()">⏳ <span>Sayaç</span></button>
-      <button class="add-zone" onclick="openCapsuleModal()">📦 <span>Kapsül</span></button>
+      <button class="add-zone" data-type="foto" onclick="document.getElementById('file-in').click()">🎬 <span>Foto / Video</span></button>
+      <button class="add-zone" data-type="soz" onclick="openQuoteModal()">💬 <span>Söz</span></button>
+      <button class="add-zone" data-type="mektup" onclick="openLetterModal()">💌 <span>Mektup</span></button>
+      <button class="add-zone" data-type="sayac" onclick="openCountdownModal()">⏳ <span>Sayaç</span></button>
+      <button class="add-zone" data-type="kapsul" onclick="openStoryCapsule()">📦 <span>Anı Kapsülü</span></button>
     </div>
   </div>
 
   <aside class="sidebar">
-    <!-- Ambient Sounds -->
+    <!-- MUSIC PLAYER WITH TOGGLEABLE VIDEO -->
+    <div class="panel">
+      <h3 class="panel-title">🎵 Müzik Çalar <button onclick="openMusicModal()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.8rem;">+ Şarkı Ekle</button></h3>
+      <div class="player-box">
+        <div class="player-video-container" id="player-video-box">
+          <iframe id="music-iframe" src="" allow="autoplay"></iframe>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span id="music-title" style="font-size:0.75rem;color:var(--text2);">Şarkı seçilmedi</span>
+          <button id="toggle-video-btn" onclick="toggleMusicVideo()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:0.65rem;cursor:pointer;">📺 Klip Göster/Gizle</button>
+        </div>
+        <div class="mini-list" id="music-list"></div>
+      </div>
+    </div>
+
+    <!-- AMBIENT SOUNDS -->
     <div class="panel">
       <h3 class="panel-title">🎧 Ortam Sesleri</h3>
       <div class="ambient-row">
@@ -258,13 +216,13 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
       </div>
     </div>
 
-    <!-- Countdowns Panel -->
+    <!-- COUNTDOWNS -->
     <div class="panel">
       <h3 class="panel-title">⏳ Geri Sayımlar</h3>
       <div class="mini-list" id="countdown-list"></div>
     </div>
 
-    <!-- AI Assistant Panel -->
+    <!-- AI CHAT -->
     <div class="ai-panel">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
         <h3 class="panel-title" id="ai-title" style="margin:0;">✦ 67</h3>
@@ -281,12 +239,24 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </aside>
 </div>
 
-<!-- Hidden inputs & Modals -->
-<input type="file" id="file-in" accept="image/*" multiple onchange="handleFiles(event)" style="display:none">
+<!-- INSTAGRAM STORY ANILARI MODALI -->
+<div class="story-overlay" id="story-overlay">
+  <span class="story-close" onclick="closeStoryCapsule()">✕</span>
+  <div class="story-card">
+    <div class="story-progress-bar" id="story-progress-bar"></div>
+    <div class="story-nav-left" onclick="prevStory()"></div>
+    <div class="story-nav-right" onclick="nextStory()"></div>
+    <div class="story-content" id="story-content"></div>
+    <div class="story-caption" id="story-caption"></div>
+  </div>
+</div>
+
+<!-- OTHER MODALS -->
+<input type="file" id="file-in" accept="image/*,video/*" multiple onchange="handleFiles(event)" style="display:none">
 
 <div class="overlay" id="ph-modal">
   <div class="modal">
-    <h3>fotoğrafı iğnele 📌</h3>
+    <h3>medyayı iğnele 📌</h3>
     <input type="text" id="ph-caption" placeholder="başlık (isteğe bağlı)" maxlength="60">
     <div class="modal-btns">
       <button class="m-cancel" onclick="closeModal('ph-modal')">iptal</button>
@@ -306,7 +276,17 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </div>
 </div>
 
-<!-- Letter Modal -->
+<div class="overlay" id="music-modal">
+  <div class="modal">
+    <h3>şarkı ekle 🎵</h3>
+    <input type="text" id="music-url" placeholder="YouTube Video Linki">
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('music-modal')">iptal</button>
+      <button class="m-ok" onclick="confirmMusic()">ekle</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="letter-modal">
   <div class="modal">
     <h3>geleceğe mektup 💌</h3>
@@ -321,7 +301,6 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </div>
 </div>
 
-<!-- Countdown Modal -->
 <div class="overlay" id="cd-modal">
   <div class="modal">
     <h3>geri sayım ekle ⏳</h3>
@@ -334,20 +313,6 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </div>
 </div>
 
-<!-- Capsule Modal -->
-<div class="overlay" id="cap-modal">
-  <div class="modal">
-    <h3>anı kapsülü 📦</h3>
-    <input type="text" id="cap-month" placeholder="Örn: Kasım 2026 Anıları">
-    <textarea id="cap-note" placeholder="Bu ayın özeti, hislerin..." style="height:70px;"></textarea>
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('cap-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmCapsule()">kapsülü mühürle</button>
-    </div>
-  </div>
-</div>
-
-<!-- AI Settings Modal -->
 <div class="overlay" id="ai-settings-modal">
   <div class="modal">
     <h3>yapay zeka ayarı ✦</h3>
@@ -365,35 +330,42 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
 const API = '';
 let aiName = '67';
 let pendingFile = null;
+let allMediaItems = [];
 
-// Ambient Sound Players
-let currentAudio = null;
-const ambUrls = {
-  rain: 'https://cdn.pixabay.com/download/audio/2021/08/09/audio_0344d56d7e.mp3?filename=rain-and-thunder-nature-sounds-7595.mp3',
-  fire: 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c38392fb.mp3?filename=campfire-crackles-11915.mp3',
-  cafe: 'https://cdn.pixabay.com/download/audio/2022/05/16/audio_db327fbc41.mp3?filename=coffee-shop-ambience-11005.mp3'
-};
+// AMBIENT SOUNDS ENGINE
+let audioCtx = null;
+let currentAmbNode = null;
 
 function toggleAmb(type, btn) {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
+  if (currentAmbNode) {
+    currentAmbNode.stop();
+    currentAmbNode = null;
     document.querySelectorAll('.amb-btn').forEach(b => b.classList.remove('active'));
     if (btn.classList.contains('active')) return;
   }
-  if (ambUrls[type]) {
-    currentAudio = new Audio(ambUrls[type]);
-    currentAudio.loop = true;
-    currentAudio.play().catch(() => {});
-    btn.classList.add('active');
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const bufferSize = audioCtx.sampleRate * 2;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+  const whiteNoise = audioCtx.createBufferSource();
+  whiteNoise.buffer = noiseBuffer;
+  whiteNoise.loop = true;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
+  filter.frequency.setValueAtTime(type === 'rain' ? 800 : 400, audioCtx.currentTime);
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  whiteNoise.connect(filter); filter.connect(gainNode); gainNode.connect(audioCtx.destination);
+  whiteNoise.start();
+  currentAmbNode = whiteNoise;
+  btn.classList.add('active');
 }
 
 async function init() {
   const savedTheme = localStorage.getItem('zw_theme') || 'midnight';
   setTheme(savedTheme, document.querySelector(`[data-t="${savedTheme}"]`));
-
-  await Promise.all([loadPhotos(), loadQuotes(), loadLetters(), loadCountdowns(), loadAiSettings()]);
+  await Promise.all([loadPhotos(), loadQuotes(), loadLetters(), loadCountdowns(), loadMusic(), loadAiSettings()]);
   updateEmpty();
 }
 
@@ -404,46 +376,30 @@ function setTheme(name, btn) {
   localStorage.setItem('zw_theme', name);
 }
 
-// ── DRAG & DROP ENGINE ────────────────────────────────────────────────────────
+// DRAG ENGINE
 function makeDraggable(el, id, endpoint) {
   let isDragging = false, startX, startY, initialX, initialY;
-
   el.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    initialX = el.offsetLeft;
-    initialY = el.offsetTop;
-    el.style.zIndex = 100;
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'VIDEO') return;
+    isDragging = true; startX = e.clientX; startY = e.clientY; initialX = el.offsetLeft; initialY = el.offsetTop; el.style.zIndex = 100;
   });
-
   document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    el.style.left = (initialX + dx) + 'px';
-    el.style.top = (initialY + dy) + 'px';
+    el.style.left = (initialX + (e.clientX - startX)) + 'px';
+    el.style.top = (initialY + (e.clientY - startY)) + 'px';
   });
-
   document.addEventListener('mouseup', () => {
     if (!isDragging) return;
-    isDragging = false;
-    el.style.zIndex = 10;
-    // Save new position to Supabase
-    fetch(`${API}/api/${endpoint}/${id}/pos`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ x: el.offsetLeft, y: el.offsetTop })
-    });
+    isDragging = false; el.style.zIndex = 10;
+    fetch(`${API}/api/${endpoint}/${id}/pos`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ x: el.offsetLeft, y: el.offsetTop }) });
   });
 }
 
-// ── PHOTOS ────────────────────────────────────────────────────────────────────
+// PHOTOS / VIDEOS
 async function loadPhotos() {
   const res = await fetch(`${API}/api/photos`);
-  const photos = await res.json();
-  photos.forEach(renderPhoto);
+  allMediaItems = await res.json();
+  allMediaItems.forEach(renderPhoto);
 }
 
 function handleFiles(e) {
@@ -459,18 +415,13 @@ async function confirmPhoto() {
   if (!pendingFile) return;
   const caption = document.getElementById('ph-caption').value.trim();
   const fd = new FormData();
-  fd.append('image', pendingFile);
-  fd.append('caption', caption);
-
-  closeModal('ph-modal');
-  showToast('yükleniyor... 📌');
-
+  fd.append('image', pendingFile); fd.append('caption', caption);
+  closeModal('ph-modal'); showToast('medya sıkıştırılıp yükleniyor... 📌');
   const res = await fetch(`${API}/api/photos`, { method: 'POST', body: fd });
   if (res.ok) {
-    const photo = await res.json();
-    renderPhoto(photo);
-    updateEmpty();
-    showToast('iğnelendi! 📌');
+    const item = await res.json();
+    allMediaItems.push(item);
+    renderPhoto(item); updateEmpty(); showToast('iğnelendi! 📌');
   }
   pendingFile = null;
 }
@@ -482,259 +433,195 @@ function renderPhoto(p) {
   el.style.left = (p.x || (Math.random() * 400 + 50)) + 'px';
   el.style.top = (p.y || (Math.random() * 300 + 50)) + 'px';
   el.style.setProperty('--rot', p.rot + 'deg');
-
-  el.innerHTML = `
-    <div class="pin-tack"><div class="pin-head"></div><div class="pin-shaft"></div></div>
-    <button class="photo-del" onclick="delPhoto('${p.id}',this)">✕</button>
-    <div class="photo-frame">
-      <img src="${p.url}" alt="" loading="lazy">
-      ${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}
-    </div>`;
-  items.appendChild(el);
-  makeDraggable(el, p.id, 'photos');
+  const mediaHtml = p.media_type === 'video' ? `<video src="${p.url}" autoplay loop muted playsinline controls></video>` : `<img src="${p.url}" alt="" loading="lazy">`;
+  el.innerHTML = `<div class="pin-tack"><div class="pin-head"></div><div class="pin-shaft"></div></div><button class="photo-del" onclick="delPhoto('${p.id}',this)">✕</button><div class="photo-frame">${mediaHtml}${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}</div>`;
+  items.appendChild(el); makeDraggable(el, p.id, 'photos');
 }
 
 async function delPhoto(id, btn) {
-  const el = btn.closest('.pinned-photo');
   await fetch(`${API}/api/photos/${id}`, { method: 'DELETE' });
-  el.remove();
-  updateEmpty();
+  btn.closest('.pinned-photo').remove(); updateEmpty();
 }
 
-// ── QUOTES ────────────────────────────────────────────────────────────────────
+// MUSIC PLAYER SYSTEM
+function openMusicModal() { document.getElementById('music-modal').classList.add('open'); }
+
+async function confirmMusic() {
+  const url = document.getElementById('music-url').value.trim();
+  if (!url) return;
+  let videoId = '';
+  if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+  else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+  if (!videoId) return alert('Geçersiz YouTube linki');
+  closeModal('music-modal');
+  const res = await fetch(`${API}/api/playlist`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ videoId, title: 'Şarkı ' + videoId })
+  });
+  if (res.ok) loadMusic();
+}
+
+async function loadMusic() {
+  const res = await fetch(`${API}/api/playlist`);
+  const list = await res.json();
+  const box = document.getElementById('music-list');
+  box.innerHTML = '';
+  list.forEach(track => {
+    const div = document.createElement('div');
+    div.className = 'mini-item';
+    div.innerHTML = `<span onclick="playMusic('${track.videoId}', '${esc(track.title)}')" style="cursor:pointer;">▶️ ${esc(track.title)}</span><button onclick="delMusic('${track.videoId}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button>`;
+    box.appendChild(div);
+  });
+}
+
+function playMusic(videoId, title) {
+  document.getElementById('music-title').textContent = title;
+  document.getElementById('music-iframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+}
+
+function toggleMusicVideo() {
+  const box = document.getElementById('player-video-box');
+  box.style.display = box.style.display === 'block' ? 'none' : 'block';
+}
+
+async function delMusic(videoId) {
+  await fetch(`${API}/api/playlist/${videoId}`, { method: 'DELETE' });
+  loadMusic();
+}
+
+// INSTAGRAM STORY CAPSULE SYSTEM
+let currentStoryIdx = 0;
+let storyTimer = null;
+
+function openStoryCapsule() {
+  if (allMediaItems.length === 0) return alert('Anı Kapsülü gösterilmek için panoya en az 1 fotoğraf veya video yüklenmeli!');
+  currentStoryIdx = 0;
+  document.getElementById('story-overlay').classList.add('open');
+  setupStories();
+}
+
+function setupStories() {
+  const bar = document.getElementById('story-progress-bar');
+  bar.innerHTML = '';
+  allMediaItems.forEach((_, idx) => {
+    bar.innerHTML += `<div class="story-progress-step"><div class="story-progress-fill" id="story-fill-${idx}"></div></div>`;
+  });
+  showStory(currentStoryIdx);
+}
+
+function showStory(idx) {
+  if (idx < 0 || idx >= allMediaItems.length) { closeStoryCapsule(); return; }
+  currentStoryIdx = idx;
+  const item = allMediaItems[idx];
+  const box = document.getElementById('story-content');
+  const cap = document.getElementById('story-caption');
+  
+  box.innerHTML = item.media_type === 'video' ? `<video src="${item.url}" autoplay loop playsinline></video>` : `<img src="${item.url}">`;
+  cap.textContent = item.caption || 'Anı ✦';
+
+  // Progress Bar Reset & Start
+  allMediaItems.forEach((_, i) => {
+    const el = document.getElementById(`story-fill-${i}`);
+    if (el) el.style.width = i < idx ? '100%' : '0%';
+  });
+
+  if (storyTimer) clearInterval(storyTimer);
+  let pct = 0;
+  const activeFill = document.getElementById(`story-fill-${idx}`);
+  storyTimer = setInterval(() => {
+    pct += 2;
+    if (activeFill) activeFill.style.width = pct + '%';
+    if (pct >= 100) { clearInterval(storyTimer); nextStory(); }
+  }, 100);
+}
+
+function nextStory() { showStory(currentStoryIdx + 1); }
+function prevStory() { showStory(currentStoryIdx - 1); }
+function closeStoryCapsule() {
+  if (storyTimer) clearInterval(storyTimer);
+  document.getElementById('story-overlay').classList.remove('open');
+}
+
+// QUOTES
 async function loadQuotes() {
   const res = await fetch(`${API}/api/quotes`);
   const quotes = await res.json();
   quotes.forEach(renderQuote);
 }
 
-function openQuoteModal() {
-  document.getElementById('qu-text').value = '';
-  document.getElementById('qu-modal').classList.add('open');
-}
-
+function openQuoteModal() { document.getElementById('qu-modal').classList.add('open'); }
 async function confirmQuote() {
   const text = document.getElementById('qu-text').value.trim();
-  if (!text) return;
-  closeModal('qu-modal');
-
-  const res = await fetch(`${API}/api/quotes`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  });
-  if (res.ok) {
-    const q = await res.json();
-    renderQuote(q);
-    updateEmpty();
-    showToast('söz eklendi ✦');
-  }
+  if (!text) return; closeModal('qu-modal');
+  const res = await fetch(`${API}/api/quotes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+  if (res.ok) { const q = await res.json(); renderQuote(q); updateEmpty(); showToast('söz eklendi ✦'); }
 }
 
 function renderQuote(q) {
   const items = document.getElementById('board-items');
   const el = document.createElement('div');
   el.className = `q-bubble ${q.style || ''}`;
-  el.style.left = (q.x || (Math.random() * 400 + 50)) + 'px';
-  el.style.top = (q.y || (Math.random() * 300 + 50)) + 'px';
-
-  const stars = '★'.repeat(q.stars || 3) + '☆'.repeat(5 - (q.stars || 3));
-  el.innerHTML = `
-    <div class="q-text">${esc(q.text)}</div>
-    <div class="q-footer"><span class="q-stars">${stars}</span><button class="q-del" onclick="delQuote('${q.id}',this)">✕</button></div>`;
-  items.appendChild(el);
-  makeDraggable(el, q.id, 'quotes');
+  el.style.left = (q.x || (Math.random() * 400 + 50)) + 'px'; el.style.top = (q.y || (Math.random() * 300 + 50)) + 'px';
+  el.innerHTML = `<div class="q-text">${esc(q.text)}</div><div class="q-footer"><span class="q-stars">★★★</span><button class="q-del" onclick="delQuote('${q.id}',this)">✕</button></div>`;
+  items.appendChild(el); makeDraggable(el, q.id, 'quotes');
 }
+async function delQuote(id, btn) { await fetch(`${API}/api/quotes/${id}`, { method: 'DELETE' }); btn.closest('.q-bubble').remove(); updateEmpty(); }
 
-async function delQuote(id, btn) {
-  const el = btn.closest('.q-bubble');
-  await fetch(`${API}/api/quotes/${id}`, { method: 'DELETE' });
-  el.remove();
-  updateEmpty();
-}
-
-// ── LETTERS (Mektup Kutusu) ───────────────────────────────────────────────────
+// LETTERS
 function openLetterModal() { document.getElementById('letter-modal').classList.add('open'); }
-
 async function confirmLetter() {
   const title = document.getElementById('let-title').value.trim();
   const content = document.getElementById('let-content').value.trim();
   const unlockDate = document.getElementById('let-date').value;
-  if (!title || !content || !unlockDate) return;
-  closeModal('letter-modal');
-
-  const res = await fetch(`${API}/api/letters`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, content, unlockDate })
-  });
-  if (res.ok) {
-    const l = await res.json();
-    renderLetter(l);
-    updateEmpty();
-    showToast('mektup mühürlendi 💌');
-  }
+  if (!title || !content || !unlockDate) return; closeModal('letter-modal');
+  const res = await fetch(`${API}/api/letters`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, content, unlockDate }) });
+  if (res.ok) { const l = await res.json(); renderLetter(l); updateEmpty(); showToast('mektup mühürlendi 💌'); }
 }
-
-async function loadLetters() {
-  const res = await fetch(`${API}/api/letters`);
-  const letters = await res.json();
-  letters.forEach(renderLetter);
-}
-
+async function loadLetters() { const res = await fetch(`${API}/api/letters`); const letters = await res.json(); letters.forEach(renderLetter); }
 function renderLetter(l) {
   const items = document.getElementById('board-items');
-  const el = document.createElement('div');
-  el.className = 'envelope-item';
-  el.style.left = (Math.random() * 400 + 50) + 'px';
-  el.style.top = (Math.random() * 300 + 50) + 'px';
-
-  el.innerHTML = `
-    <div class="envelope-box" onclick="openEnvelope('${esc(l.title)}', '${esc(l.content)}', '${l.unlockDate}')">
-      💌 ${esc(l.title)}<br><span style="font-size:0.6rem;color:#777;">Açılış: ${l.unlockDate}</span>
-    </div>
-    <button class="env-del" onclick="delLetter('${l.id}', this)">✕</button>`;
+  const el = document.createElement('div'); el.className = 'envelope-item'; el.style.left = (Math.random() * 400 + 50) + 'px'; el.style.top = (Math.random() * 300 + 50) + 'px';
+  el.innerHTML = `<div class="envelope-box" onclick="alert('💌 Mektup: ${esc(l.title)}\\n\\n${esc(l.content)}')">💌 ${esc(l.title)}</div><button class="env-del" onclick="delLetter('${l.id}', this)">✕</button>`;
   items.appendChild(el);
 }
+async function delLetter(id, btn) { await fetch(`${API}/api/letters/${id}`, { method: 'DELETE' }); btn.closest('.envelope-item').remove(); updateEmpty(); }
 
-function openEnvelope(title, content, unlockDate) {
-  const today = new Date().toISOString().split('T')[0];
-  if (today < unlockDate) {
-    alert(`Bu mektup henüz kilitli! 🔒 Açılacağı tarih: ${unlockDate}`);
-  } else {
-    alert(`💌 Mektup: ${title}\n\n${content}`);
-  }
-}
-
-async function delLetter(id, btn) {
-  await fetch(`${API}/api/letters/${id}`, { method: 'DELETE' });
-  btn.closest('.envelope-item').remove();
-  updateEmpty();
-}
-
-// ── COUNTDOWNS (Geri Sayımlar) ────────────────────────────────────────────────
+// COUNTDOWNS
 function openCountdownModal() { document.getElementById('cd-modal').classList.add('open'); }
-
 async function confirmCountdown() {
   const title = document.getElementById('cd-title').value.trim();
   const targetDate = document.getElementById('cd-date').value;
-  if (!title || !targetDate) return;
-  closeModal('cd-modal');
-
-  const res = await fetch(`${API}/api/countdowns`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, targetDate })
-  });
+  if (!title || !targetDate) return; closeModal('cd-modal');
+  const res = await fetch(`${API}/api/countdowns`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, targetDate }) });
   if (res.ok) loadCountdowns();
 }
-
 async function loadCountdowns() {
   const res = await fetch(`${API}/api/countdowns`);
-  const list = await res.json();
-  const box = document.getElementById('countdown-list');
-  box.innerHTML = '';
+  const list = await res.json(); const box = document.getElementById('countdown-list'); box.innerHTML = '';
   list.forEach(c => {
     const daysLeft = Math.ceil((new Date(c.targetDate) - new Date()) / (1000 * 60 * 60 * 24));
-    const div = document.createElement('div');
-    div.className = 'mini-item';
-    div.innerHTML = `<span><b>${esc(c.title)}</b>: ${daysLeft > 0 ? daysLeft + ' gün kaldı' : 'Zamanı geldi!'}</span> <button onclick="delCd('${c.id}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button>`;
-    box.appendChild(div);
+    box.innerHTML += `<div class="mini-item"><span><b>${esc(c.title)}</b>: ${daysLeft > 0 ? daysLeft + ' gün kaldı' : 'Günün Geldi!'}</span><button onclick="delCd('${c.id}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button></div>`;
   });
 }
+async function delCd(id) { await fetch(`${API}/api/countdowns/${id}`, { method: 'DELETE' }); loadCountdowns(); }
 
-async function delCd(id) {
-  await fetch(`${API}/api/countdowns/${id}`, { method: 'DELETE' });
-  loadCountdowns();
-}
-
-// ── CAPSULES (Anı Kapsülü) ────────────────────────────────────────────────────
-function openCapsuleModal() { document.getElementById('cap-modal').classList.add('open'); }
-
-async function confirmCapsule() {
-  const monthName = document.getElementById('cap-month').value.trim();
-  const note = document.getElementById('cap-note').value.trim();
-  if (!monthName || !note) return;
-  closeModal('cap-modal');
-
-  const res = await fetch(`${API}/api/capsules`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ monthName, note })
-  });
-  if (res.ok) showToast('Anı kapsülü mühürlendi 📦');
-}
-
-// ── AI CHAT ───────────────────────────────────────────────────────────────────
-async function loadAiSettings() {
-  const res = await fetch(`${API}/api/settings`);
-  const data = await res.json();
-  if (data.aiName) {
-    aiName = data.aiName;
-    document.getElementById('ai-title').textContent = '✦ ' + aiName;
-  }
-}
-
-function openAiSettingsModal() {
-  document.getElementById('ai-name-input').value = aiName;
-  document.getElementById('ai-settings-modal').classList.add('open');
-}
-
-async function saveAiSettings() {
-  const newName = document.getElementById('ai-name-input').value.trim();
-  if (!newName) return;
-  aiName = newName;
-  document.getElementById('ai-title').textContent = '✦ ' + aiName;
-  closeModal('ai-settings-modal');
-  await fetch(`${API}/api/settings`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ aiName })
-  });
-}
-
+// AI CHAT
+async function loadAiSettings() { const res = await fetch(`${API}/api/settings`); const data = await res.json(); if (data.aiName) { aiName = data.aiName; document.getElementById('ai-title').textContent = '✦ ' + aiName; } }
+function openAiSettingsModal() { document.getElementById('ai-name-input').value = aiName; document.getElementById('ai-settings-modal').classList.add('open'); }
+async function saveAiSettings() { const newName = document.getElementById('ai-name-input').value.trim(); if (!newName) return; aiName = newName; document.getElementById('ai-title').textContent = '✦ ' + aiName; closeModal('ai-settings-modal'); await fetch(`${API}/api/settings`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ aiName }) }); }
 async function sendAiMsg() {
-  const input = document.getElementById('ai-input');
-  const prompt = input.value.trim();
-  if (!prompt) return;
-
-  const chatBox = document.getElementById('ai-chat-box');
-  chatBox.innerHTML += `<div class="ai-msg user">${esc(prompt)}</div>`;
-  input.value = '';
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  const loading = document.createElement('div');
-  loading.className = 'ai-msg assistant';
-  loading.textContent = 'Düşünüyor...';
-  chatBox.appendChild(loading);
-
-  const res = await fetch(`${API}/api/ai/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, aiName })
-  });
-  const data = await res.json();
-  loading.innerHTML = esc(data.text) + (data.image ? `<br><img src="${data.image}">` : '');
-  chatBox.scrollTop = chatBox.scrollHeight;
+  const input = document.getElementById('ai-input'); const prompt = input.value.trim(); if (!prompt) return;
+  const chatBox = document.getElementById('ai-chat-box'); chatBox.innerHTML += `<div class="ai-msg user">${esc(prompt)}</div>`; input.value = ''; chatBox.scrollTop = chatBox.scrollHeight;
+  const loading = document.createElement('div'); loading.className = 'ai-msg assistant'; loading.textContent = 'Düşünüyor...'; chatBox.appendChild(loading);
+  const res = await fetch(`${API}/api/ai/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, aiName }) });
+  const data = await res.json(); loading.innerHTML = esc(data.text) + (data.image ? `<br><img src="${data.image}">` : ''); chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Utils
+// UTILS
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-function updateEmpty() {
-  const items = document.getElementById('board-items');
-  const empty = document.getElementById('board-empty');
-  empty.style.display = items.children.length > 1 ? 'none' : 'flex';
-}
-function esc(s) {
-  if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+function updateEmpty() { document.getElementById('board-empty').style.display = document.getElementById('board-items').children.length > 1 ? 'none' : 'flex'; }
+function esc(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
 
 init();
 </script>

@@ -57,7 +57,7 @@ async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
           };
           result = await model.generateContent([
             systemInstruction,
-            prompt || "Bu fotoğrafı kısaca yorumla.",
+            prompt || "Bu görseli/dosyayı kısaca yorumla.",
             imagePart
           ]);
         } else {
@@ -85,11 +85,16 @@ async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
+// Multer (Fotoğraf ve Video Desteği - Max 50MB)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (_, file, cb) => {
-    cb(null, file.mimetype.startsWith('image/'));
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Sadece fotoğraf veya video yüklenebilir!'), false);
+    }
   }
 });
 
@@ -167,19 +172,30 @@ app.post('/api/ai/chat', upload.single('image'), async (req, res) => {
   }
 });
 
-// Photos API
+// Photos & Videos API
 app.get('/api/photos', async (_, res) => {
   const db = await readDB();
   res.json(db.photos || []);
 });
 
 app.post('/api/photos', upload.single('image'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No image' });
+  if (!req.file) return res.status(400).json({ error: 'Dosya yüklenemedi.' });
   try {
+    const isVideo = req.file.mimetype.startsWith('video/');
+    
+    // Cloudinary Yüklemesi + Kayıpsız Kalite Sıkıştırması (Auto Quality & Auto Format)
     const uploadStream = () => new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream({ folder: 'zeynep-world' }, (error, result) => {
-        if (result) resolve(result); else reject(error);
-      });
+      const stream = cloudinary.uploader.upload_stream(
+        { 
+          folder: 'zeynep-world',
+          resource_type: isVideo ? 'video' : 'image',
+          quality: 'auto:good',      // Bozmadan maksimum sıkıştırma
+          fetch_format: 'auto'       // WebP/AVIF/MP4 vb. en hafif formata çevirir
+        }, 
+        (error, result) => {
+          if (result) resolve(result); else reject(error);
+        }
+      );
       stream.end(req.file.buffer);
     });
 
@@ -187,25 +203,27 @@ app.post('/api/photos', upload.single('image'), async (req, res) => {
     const db = await readDB();
     const rots = [-7, -5, -3, -1, 1, 3, 5, 7];
     
-    const photo = {
+    const item = {
       id: uuidv4(),
       url: uploadResult.secure_url,
       public_id: uploadResult.public_id,
+      media_type: isVideo ? 'video' : 'image',
       caption: req.body.caption || '',
       rot: rots[Math.floor(Math.random() * rots.length)],
       taped: Math.random() > 0.55,
       tapeRot: (Math.random() * 10 - 5).toFixed(1),
       order: Date.now(),
-      x: 0, y: 0, // Drag & Drop koordinatları
+      x: 0, y: 0,
       type: 'photo'
     };
 
     if (!db.photos) db.photos = [];
-    db.photos.push(photo);
+    db.photos.push(item);
     await writeDB(db);
-    res.status(201).json(photo);
+    res.status(201).json(item);
   } catch (err) {
-    res.status(500).json({ error: 'Yükleme hatası' });
+    console.error('Cloudinary upload error:', err);
+    res.status(500).json({ error: 'Medya yüklenirken hata oluştu.' });
   }
 });
 
@@ -224,7 +242,9 @@ app.delete('/api/photos/:id', async (req, res) => {
   const db = await readDB();
   const photo = db.photos?.find(p => p.id === req.params.id);
   if (photo && photo.public_id) {
-    try { await cloudinary.uploader.destroy(photo.public_id); } catch(e) {}
+    try { 
+      await cloudinary.uploader.destroy(photo.public_id, { resource_type: photo.media_type === 'video' ? 'video' : 'image' }); 
+    } catch(e) {}
   }
   db.photos = (db.photos || []).filter(p => p.id !== req.params.id);
   await writeDB(db);
@@ -301,7 +321,7 @@ app.delete('/api/playlist/:videoId', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Letters (Mektup Kutusu) API
+// Letters API
 app.get('/api/letters', async (_, res) => {
   const db = await readDB();
   res.json(db.letters || []);
@@ -324,7 +344,7 @@ app.delete('/api/letters/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Countdowns (Anı Sayaçları) API
+// Countdowns API
 app.get('/api/countdowns', async (_, res) => {
   const db = await readDB();
   res.json(db.countdowns || []);
@@ -347,7 +367,7 @@ app.delete('/api/countdowns/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
-// Capsules (Anı Kapsülü) API
+// Capsules API
 app.get('/api/capsules', async (_, res) => {
   const db = await readDB();
   res.json(db.capsules || []);
