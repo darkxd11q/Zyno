@@ -27,12 +27,7 @@ const apiKeys = [
   process.env.GEMINI_API_KEY_2
 ].filter(Boolean);
 
-const modelsSequence = [
-  'gemini-3.6-flash',
-  'gemini-3.6-flash-lite',
-  'gemini-3.5-flash',
-  'gemini-3.5-flash-lite'
-];
+const modelsSequence = ['gemini-3.6-flash', 'gemini-3.6-flash-lite', 'gemini-3.5-flash', 'gemini-3.5-flash-lite'];
 
 async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
   const systemInstruction = `Senin adın ${aiName || '67'}. Zeynep World kişisel moodboard uygulamasının samimi, tatlı ve yardımsever yapay zeka asistanısın. Türkçe konuş, kısa ve tatlı cevaplar ver.`;
@@ -40,103 +35,56 @@ async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
   for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
     const apiKey = apiKeys[kIndex];
     if (!apiKey) continue;
-    
     const genAI = new GoogleGenerativeAI(apiKey);
-
     for (const modelName of modelsSequence) {
       try {
         const model = genAI.getGenerativeModel({ model: modelName });
         let result;
-
         if (imageBuffer) {
-          const imagePart = {
-            inlineData: {
-              data: imageBuffer.toString("base64"),
-              mimeType: mimeType
-            }
-          };
-          result = await model.generateContent([
-            systemInstruction,
-            prompt || "Bu görseli/dosyayı kısaca yorumla.",
-            imagePart
-          ]);
+          const imagePart = { inlineData: { data: imageBuffer.toString("base64"), mimeType: mimeType } };
+          result = await model.generateContent([systemInstruction, prompt || "Bu dosyayı yorumla.", imagePart]);
         } else {
-          result = await model.generateContent([
-            systemInstruction,
-            prompt
-          ]);
+          result = await model.generateContent([systemInstruction, prompt]);
         }
-
         const text = result.response?.text();
         if (text) return text;
       } catch (err) {}
     }
   }
-
   try {
-    const fullQuery = `${systemInstruction}\nKullanıcı: ${prompt || 'Selam'}`;
-    const aiRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullQuery)}`);
+    const aiRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemInstruction + '\n' + prompt)}`);
     const fallbackText = await aiRes.text();
     if (fallbackText && !fallbackText.includes('<html>')) return fallbackText;
   } catch (e) {}
-
   throw new Error('Yanıt oluşturulamadı.');
 }
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
-
-// Multer (Fotoğraf ve Video Desteği - Max 50MB)
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 },
-  fileFilter: (_, file, cb) => {
-    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Sadece fotoğraf veya video yüklenebilir!'), false);
-    }
-  }
-});
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(PUBLIC_DIR));
 
-app.get('/', (_, res) => {
-  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
-});
+app.get('/', (_, res) => res.sendFile(path.join(PUBLIC_DIR, 'index.html')));
 
-const DEFAULT_DATA = { 
-  photos: [], 
-  quotes: [], 
-  playlist: [], 
-  letters: [],
-  countdowns: [],
-  capsules: [],
-  settings: { theme: 'midnight', moods: [], aiName: '67' } 
-};
+const DEFAULT_DATA = { photos: [], quotes: [], playlist: [], letters: [], countdowns: [], capsules: [], settings: { theme: 'midnight', aiName: '67' } };
 
 async function readDB() {
   if (!supabase) return DEFAULT_DATA;
   try {
-    const { data, error } = await supabase.from('zw_store').select('data').eq('id', 'main_db').single();
-    if (error || !data) return DEFAULT_DATA;
-    return { ...DEFAULT_DATA, ...(data.data || {}) };
-  } catch (_) {
-    return DEFAULT_DATA;
-  }
+    const { data } = await supabase.from('zw_store').select('data').eq('id', 'main_db').single();
+    return { ...DEFAULT_DATA, ...(data?.data || {}) };
+  } catch (_) { return DEFAULT_DATA; }
 }
 
 async function writeDB(data) {
   if (!supabase) return;
-  try {
-    await supabase.from('zw_store').upsert({ id: 'main_db', data });
-  } catch (e) {}
+  try { await supabase.from('zw_store').upsert({ id: 'main_db', data }); } catch (e) {}
 }
 
 app.get('/api/settings', async (_, res) => {
   const db = await readDB();
-  if (!db.settings.aiName) db.settings.aiName = '67';
   res.json(db.settings);
 });
 
@@ -147,242 +95,136 @@ app.patch('/api/settings', async (req, res) => {
   res.json(db.settings);
 });
 
+// YouTube Arama API (Link yerine aratıp bulmak için)
+app.get('/api/youtube/search', async (req, res) => {
+  const query = req.query.q;
+  if (!query) return res.json([]);
+  try {
+    // Invidious API kullanarak anahtarsız YouTube araması
+    const response = await fetch(`https://vid.puffyan.us/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
+    const data = await response.json();
+    const results = (data || []).slice(0, 5).map(item => ({
+      videoId: item.videoId,
+      title: item.title,
+      channel: item.author,
+      thumb: item.videoThumbnails?.[0]?.url || ''
+    }));
+    res.json(results);
+  } catch (e) {
+    res.json([]);
+  }
+});
+
 // AI Chat
 app.post('/api/ai/chat', upload.single('image'), async (req, res) => {
   try {
     const { prompt, aiName } = req.body;
     let responseText = '';
     let generatedImageUrl = null;
-
-    const lowerPrompt = (prompt || '').toLowerCase();
-    const isImageGenRequest = lowerPrompt.includes('çiz') || lowerPrompt.includes('oluştur') || lowerPrompt.includes('resmini yap') || lowerPrompt.includes('görsel üret');
-
-    if (isImageGenRequest) {
+    if ((prompt || '').toLowerCase().includes('çiz')) {
       generatedImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true`;
-      responseText = `İstediğin görseli senin için hazırladım ✦`;
+      responseText = `İstediğin görseli hazırladım ✦`;
     } else {
-      let imageBuffer = req.file ? req.file.buffer : null;
-      let mimeType = req.file ? req.file.mimetype : null;
-      responseText = await generateWithFallback(prompt, imageBuffer, mimeType, aiName);
+      responseText = await generateWithFallback(prompt, req.file?.buffer, req.file?.mimetype, aiName);
     }
-
     res.json({ text: responseText, image: generatedImageUrl });
   } catch (err) {
-    res.status(500).json({ error: 'Yapay zeka şu an yanıt veremiyor.' });
+    res.status(500).json({ error: 'Yapay zeka yanıt veremiyor.' });
   }
 });
 
-// Photos & Videos API
-app.get('/api/photos', async (_, res) => {
-  const db = await readDB();
-  res.json(db.photos || []);
-});
-
+// Photos & Videos
+app.get('/api/photos', async (_, res) => { const db = await readDB(); res.json(db.photos || []); });
 app.post('/api/photos', upload.single('image'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Dosya yüklenemedi.' });
+  if (!req.file) return res.status(400).json({ error: 'Dosya yok' });
   try {
     const isVideo = req.file.mimetype.startsWith('video/');
-    
-    // Cloudinary Yüklemesi + Kayıpsız Kalite Sıkıştırması (Auto Quality & Auto Format)
     const uploadStream = () => new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { 
-          folder: 'zeynep-world',
-          resource_type: isVideo ? 'video' : 'image',
-          quality: 'auto:good',      // Bozmadan maksimum sıkıştırma
-          fetch_format: 'auto'       // WebP/AVIF/MP4 vb. en hafif formata çevirir
-        }, 
-        (error, result) => {
-          if (result) resolve(result); else reject(error);
-        }
-      );
+      const stream = cloudinary.uploader.upload_stream({ folder: 'zeynep-world', resource_type: isVideo ? 'video' : 'image', quality: 'auto:good', fetch_format: 'auto' }, (err, result) => {
+        if (result) resolve(result); else reject(err);
+      });
       stream.end(req.file.buffer);
     });
-
-    const uploadResult = await uploadStream();
+    const result = await uploadStream();
     const db = await readDB();
     const rots = [-7, -5, -3, -1, 1, 3, 5, 7];
-    
-    const item = {
-      id: uuidv4(),
-      url: uploadResult.secure_url,
-      public_id: uploadResult.public_id,
-      media_type: isVideo ? 'video' : 'image',
-      caption: req.body.caption || '',
-      rot: rots[Math.floor(Math.random() * rots.length)],
-      taped: Math.random() > 0.55,
-      tapeRot: (Math.random() * 10 - 5).toFixed(1),
-      order: Date.now(),
-      x: 0, y: 0,
-      type: 'photo'
-    };
-
+    const item = { id: uuidv4(), url: result.secure_url, public_id: result.public_id, media_type: isVideo ? 'video' : 'image', caption: req.body.caption || '', rot: rots[Math.floor(Math.random() * rots.length)], taped: Math.random() > 0.55, tapeRot: (Math.random() * 10 - 5).toFixed(1), x: 0, y: 0 };
     if (!db.photos) db.photos = [];
     db.photos.push(item);
     await writeDB(db);
     res.status(201).json(item);
-  } catch (err) {
-    console.error('Cloudinary upload error:', err);
-    res.status(500).json({ error: 'Medya yüklenirken hata oluştu.' });
-  }
+  } catch (e) { res.status(500).json({ error: 'Yükleme hatası' }); }
 });
-
 app.patch('/api/photos/:id/pos', async (req, res) => {
   const db = await readDB();
-  const photo = db.photos?.find(p => p.id === req.params.id);
-  if (photo) {
-    photo.x = req.body.x;
-    photo.y = req.body.y;
-    await writeDB(db);
-  }
+  const p = db.photos?.find(x => x.id === req.params.id);
+  if (p) { p.x = req.body.x; p.y = req.body.y; await writeDB(db); }
   res.json({ ok: true });
 });
-
 app.delete('/api/photos/:id', async (req, res) => {
   const db = await readDB();
-  const photo = db.photos?.find(p => p.id === req.params.id);
-  if (photo && photo.public_id) {
-    try { 
-      await cloudinary.uploader.destroy(photo.public_id, { resource_type: photo.media_type === 'video' ? 'video' : 'image' }); 
-    } catch(e) {}
-  }
-  db.photos = (db.photos || []).filter(p => p.id !== req.params.id);
-  await writeDB(db);
-  res.json({ ok: true });
+  const p = db.photos?.find(x => x.id === req.params.id);
+  if (p?.public_id) { try { await cloudinary.uploader.destroy(p.public_id, { resource_type: p.media_type === 'video' ? 'video' : 'image' }); } catch(e){} }
+  db.photos = (db.photos || []).filter(x => x.id !== req.params.id);
+  await writeDB(db); res.json({ ok: true });
 });
 
-// Quotes API
-app.get('/api/quotes', async (_, res) => {
-  const db = await readDB();
-  res.json(db.quotes || []);
-});
-
+// Quotes
+app.get('/api/quotes', async (_, res) => { const db = await readDB(); res.json(db.quotes || []); });
 app.post('/api/quotes', async (req, res) => {
-  const { text } = req.body;
-  if (!text || !text.trim()) return res.status(400).json({ error: 'No text' });
-  const db = await readDB();
-  if (!db.quotes) db.quotes = [];
-
-  const bubbleStyles = ['standard', 'alt', 'center'];
-  const quote = {
-    id: uuidv4(),
-    text: text.trim(),
-    style: bubbleStyles[db.quotes.length % bubbleStyles.length],
-    stars: Math.floor(Math.random() * 3) + 3,
-    order: Date.now(),
-    x: 0, y: 0,
-    type: 'quote'
-  };
-
-  db.quotes.push(quote);
-  await writeDB(db);
-  res.status(201).json(quote);
+  const { text } = req.body; if (!text) return res.status(400).json({ error: 'Boş' });
+  const db = await readDB(); if (!db.quotes) db.quotes = [];
+  const q = { id: uuidv4(), text, style: 'standard', stars: 5, x: 0, y: 0 };
+  db.quotes.push(q); await writeDB(db); res.status(201).json(q);
 });
-
 app.patch('/api/quotes/:id/pos', async (req, res) => {
-  const db = await readDB();
-  const q = db.quotes?.find(item => item.id === req.params.id);
-  if (q) {
-    q.x = req.body.x;
-    q.y = req.body.y;
-    await writeDB(db);
-  }
-  res.json({ ok: true });
+  const db = await readDB(); const q = db.quotes?.find(x => x.id === req.params.id);
+  if (q) { q.x = req.body.x; q.y = req.body.y; await writeDB(db); } res.json({ ok: true });
 });
-
 app.delete('/api/quotes/:id', async (req, res) => {
-  const db = await readDB();
-  db.quotes = (db.quotes || []).filter(q => q.id !== req.params.id);
-  await writeDB(db);
-  res.json({ ok: true });
+  const db = await readDB(); db.quotes = (db.quotes || []).filter(x => x.id !== req.params.id); await writeDB(db); res.json({ ok: true });
 });
 
-// Playlist API
-app.get('/api/playlist', async (_, res) => {
-  const db = await readDB();
-  res.json(db.playlist || []);
-});
-
+// Playlist
+app.get('/api/playlist', async (_, res) => { const db = await readDB(); res.json(db.playlist || []); });
 app.post('/api/playlist', async (req, res) => {
   const { videoId, title, channel, thumb } = req.body;
-  const db = await readDB();
-  if (!db.playlist) db.playlist = [];
-  if (!db.playlist.find(t => t.videoId === videoId)) {
+  const db = await readDB(); if (!db.playlist) db.playlist = [];
+  if (!db.playlist.find(x => x.videoId === videoId)) {
     db.playlist.push({ videoId, title, channel, thumb });
     await writeDB(db);
   }
   res.json(db.playlist);
 });
-
 app.delete('/api/playlist/:videoId', async (req, res) => {
   const db = await readDB();
-  db.playlist = (db.playlist || []).filter(t => t.videoId !== req.params.videoId);
-  await writeDB(db);
-  res.json({ ok: true });
+  db.playlist = (db.playlist || []).filter(x => x.videoId !== req.params.videoId);
+  await writeDB(db); res.json({ ok: true });
 });
 
-// Letters API
-app.get('/api/letters', async (_, res) => {
-  const db = await readDB();
-  res.json(db.letters || []);
-});
-
+// Letters, Countdowns, Capsules
+app.get('/api/letters', async (_, res) => { res.json((await readDB()).letters || []); });
 app.post('/api/letters', async (req, res) => {
-  const { title, content, unlockDate } = req.body;
-  const db = await readDB();
-  if (!db.letters) db.letters = [];
-  const letter = { id: uuidv4(), title, content, unlockDate, createdAt: Date.now() };
-  db.letters.push(letter);
-  await writeDB(db);
-  res.status(201).json(letter);
+  const db = await readDB(); if (!db.letters) db.letters = [];
+  const l = { id: uuidv4(), ...req.body }; db.letters.push(l); await writeDB(db); res.status(201).json(l);
 });
-
 app.delete('/api/letters/:id', async (req, res) => {
-  const db = await readDB();
-  db.letters = (db.letters || []).filter(l => l.id !== req.params.id);
-  await writeDB(db);
-  res.json({ ok: true });
+  const db = await readDB(); db.letters = (db.letters || []).filter(x => x.id !== req.params.id); await writeDB(db); res.json({ ok: true });
 });
 
-// Countdowns API
-app.get('/api/countdowns', async (_, res) => {
-  const db = await readDB();
-  res.json(db.countdowns || []);
+app.get('/api/countdowns', async (_, res) => { res.json((await readDB()).countdowns || []); });
+app.post('/api/countdowns', async (_, res) => {
+  const db = await readDB(); if (!db.countdowns) db.countdowns = [];
+  const c = { id: uuidv4(), ...req.body }; db.countdowns.push(c); await writeDB(db); res.status(201).json(c);
 });
-
-app.post('/api/countdowns', async (req, res) => {
-  const { title, targetDate } = req.body;
-  const db = await readDB();
-  if (!db.countdowns) db.countdowns = [];
-  const cd = { id: uuidv4(), title, targetDate };
-  db.countdowns.push(cd);
-  await writeDB(db);
-  res.status(201).json(cd);
-});
-
 app.delete('/api/countdowns/:id', async (req, res) => {
-  const db = await readDB();
-  db.countdowns = (db.countdowns || []).filter(c => c.id !== req.params.id);
-  await writeDB(db);
-  res.json({ ok: true });
+  const db = await readDB(); db.countdowns = (db.countdowns || []).filter(x => x.id !== req.params.id); await writeDB(db); res.json({ ok: true });
 });
 
-// Capsules API
-app.get('/api/capsules', async (_, res) => {
-  const db = await readDB();
-  res.json(db.capsules || []);
+app.get('/api/capsules', async (_, res) => { res.json((await readDB()).capsules || []); });
+app.post('/api/capsules', async (_, res) => {
+  const db = await readDB(); if (!db.capsules) db.capsules = [];
+  const cap = { id: uuidv4(), ...req.body }; db.capsules.push(cap); await writeDB(db); res.status(201).json(cap);
 });
 
-app.post('/api/capsules', async (req, res) => {
-  const { monthName, note } = req.body;
-  const db = await readDB();
-  if (!db.capsules) db.capsules = [];
-  const cap = { id: uuidv4(), monthName, note, date: new Date().toLocaleDateString('tr-TR') };
-  db.capsules.push(cap);
-  await writeDB(db);
-  res.status(201).json(cap);
-});
-
-app.listen(PORT, () => {
-  console.log(`\n✦ Zeynep World — http://localhost:${PORT}\n`);
-});
+app.listen(PORT, () => console.log(`✦ Server running on port ${PORT}`));
