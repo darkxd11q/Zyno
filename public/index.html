@@ -51,25 +51,18 @@ header{
 .th-btn{ border:none;cursor:pointer;border-radius:50px;padding:4px 10px; font-family:var(--fb);font-size:.65rem;font-weight:500; color:var(--text3);background:transparent;transition:all .25s; }
 .th-btn.on{background:var(--accent);color:var(--bg);font-weight:700;}
 
-/* RESPONSIVE GRID LAYOUT */
 .wrapper{ display:grid; grid-template-columns:1fr 340px; min-height:calc(100vh - 138px); }
 @media(max-width: 900px) {
   .wrapper { grid-template-columns: 1fr; }
   aside.sidebar { border-top: 1px solid var(--border); }
 }
 
-.board-col{ display:grid; grid-template-rows:1fr auto; border-right:1px solid var(--border); }
+.board-col{ display:grid; grid-template-rows:1fr auto; border-right:1px solid var(--border); position: relative; }
 .corkboard{ padding:0; background:var(--cork); min-height:450px; position:relative; overflow:hidden; }
 .board-items{ position:relative; width:100%; height:100%; min-height:500px; }
 .board-empty{ position:absolute;inset:0; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px; color:var(--text3);font-family:var(--fh);font-size:1.2rem; pointer-events:none; }
 
-.pinned-photo, .q-bubble, .envelope-item, .add-zone { position: relative; overflow: hidden; z-index: 1; }
-.pinned-photo::before, .q-bubble::before, .envelope-item::before, .add-zone::before {
-  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-  background: var(--fill-color, var(--accent)); opacity: 0.25;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: -1; pointer-events: none !important; border-radius: inherit;
-}
-.pinned-photo:active::before, .q-bubble:active::before, .envelope-item:active::before, .add-zone:active::before, .add-zone:hover::before { transform: translateX(100%); }
+.pinned-photo, .q-bubble, .envelope-item { position: relative; overflow: hidden; z-index: 1; }
 
 .pinned-photo { --fill-color: #ff3d6b; position: absolute; cursor: grab; width: 150px; }
 .photo-frame{ background:#fff; padding:8px 8px 28px; transform:rotate(var(--rot)); box-shadow:3px 5px 18px rgba(0,0,0,.3); }
@@ -89,20 +82,19 @@ header{
 .envelope-box { --fill-color: #f4e8c1; background: #f4e8c1; color: #4a3b2c; padding: 10px 15px; border-radius: 6px; font-family: var(--fh); font-size: 1rem; text-align: center; width: 140px; cursor: pointer; }
 .envelope-item { position: absolute; }
 
-/* 2 BUTONLU DÜZENLİ TOOLBAR */
-.add-zones{ display:grid; grid-template-columns: 1fr 1fr; border-top:1px solid var(--border); background:var(--bg2); position: relative; }
-.add-zone{ height:60px; display:flex;flex-direction:column;align-items:center;justify-content:center; cursor:pointer; border:none; background:transparent;color:var(--text3); font-family:var(--fh); font-size:0.85rem; gap:3px; z-index:10; }
-.add-zone * { pointer-events: none; }
-.add-zone:first-child { border-right: 1px solid var(--border); --fill-color: #ff3d6b; }
-.add-zone:last-child { --fill-color: #7b5ef8; }
+/* DÜZELTİLMİŞ TOOLBAR VE BUTON TIKLAMALARI */
+.add-zones{ display:grid; grid-template-columns: 1fr 1fr; border-top:1px solid var(--border); background:var(--bg2); position: relative; z-index: 50; }
+.add-zone-btn{ height:60px; display:flex;flex-direction:column;align-items:center;justify-content:center; cursor:pointer; border:none; background:transparent;color:var(--text); font-family:var(--fh); font-size:0.95rem; gap:3px; position:relative; width: 100%; transition: background 0.2s; }
+.add-zone-btn:hover { background: var(--surface2); }
+.add-zone-btn:first-child { border-right: 1px solid var(--border); }
 
-/* 3 NOKTA AÇILIR MENÜ */
+/* 3 NOKTA POPUP MENÜ */
 .menu-popup {
-  position: absolute; bottom: 65px; right: 10px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 8px; display: none; flex-direction: column; gap: 6px; z-index: 300; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 160px;
+  position: absolute; bottom: 70px; right: 15px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px; display: none; flex-direction: column; gap: 4px; z-index: 400; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 180px;
 }
 .menu-popup.open { display: flex; }
-.menu-item { background: transparent; border: none; padding: 8px 10px; text-align: left; color: var(--text); font-family: var(--fb); font-size: 0.75rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
+.menu-item { background: transparent; border: none; padding: 10px 12px; text-align: left; color: var(--text); font-family: var(--fb); font-size: 0.8rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
 .menu-item:hover { background: var(--surface2); color: var(--accent); }
 
 aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflow-y:auto; }
@@ -116,7 +108,6 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
 .mini-list{ max-height:100px; overflow-y:auto; display:flex;flex-direction:column;gap:5px; }
 .mini-item{ background:var(--surface); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:0.72rem; display:flex;justify-content:space-between;align-items:center; }
 
-/* BÜYÜTÜLEBİLİR AI PANELİ */
 .ai-panel{ padding:14px; border-bottom:1px solid var(--border); display:flex;flex-direction:column; flex:1; transition: all 0.3s ease; }
 .ai-panel.expanded { position: fixed; inset: 20px; z-index: 900; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,0.9); }
 .ai-chat-box{ flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:8px; max-height:150px; overflow-y:auto; display:flex;flex-direction:column;gap:8px; margin-bottom:8px; }
@@ -124,12 +115,11 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
 .ai-msg{ font-size:0.75rem; padding:6px 8px; border-radius:6px; line-height:1.4; max-width:90%; word-break:break-word; }
 .ai-msg.user{ background:var(--surface2); color:var(--text); align-self:flex-end; }
 .ai-msg.assistant{ background:var(--surface); color:var(--text2); align-self:flex-start; border:1px solid var(--border); }
-.ai-msg img { width: 100%; max-height: 120px; object-fit: cover; border-radius: 4px; margin-top: 4px; }
+.ai-msg img { width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; margin-top: 6px; }
 .ai-input-row{ display:flex; gap:5px; align-items:center; }
 .ai-input{ flex:1; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:6px; font-size:0.72rem; color:var(--text); outline:none; }
 .ai-send-btn{ padding:6px 9px; background:var(--accent); border:none; border-radius:4px; color:var(--bg); font-weight:700; font-size:0.68rem; cursor:pointer; }
 
-/* SPOTIFY BAR */
 .spotify-bar {
   position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #121212; border-top: 1px solid #282828;
   display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 500; font-family: var(--fb); color: #fff;
@@ -147,7 +137,6 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
 .spotify-video-modal { position: fixed; bottom: 80px; right: 16px; width: 280px; height: 160px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 600; display: none; }
 .spotify-video-modal iframe { width: 100%; height: 100%; border: none; }
 
-/* STORY MODAL */
 .story-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(15px); }
 .story-overlay.open { display:flex; }
 .story-card { width: 320px; height: 540px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
@@ -201,10 +190,10 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
       </div>
     </div>
 
-    <!-- DÜZENLİ TOOLBAR: FOTO/VİDEO TEK ALAN, DİĞERLERİ 3 NOKTADA -->
+    <!-- GARANTİ ÇALIŞAN ALT BUTONLAR -->
     <div class="add-zones">
-      <button class="add-zone" onclick="triggerFileInput()">🎬 <span>Foto / Video Ekle</span></button>
-      <button class="add-zone" onclick="toggleMenu(event)">••• <span>Diğer Seçenekler</span></button>
+      <button type="button" class="add-zone-btn" onclick="triggerFileInput()">🎬 <span>Foto / Video Ekle</span></button>
+      <button type="button" class="add-zone-btn" onclick="toggleMenu(event)">••• <span>Diğer Seçenekler</span></button>
     </div>
 
     <!-- 3 NOKTA AÇILIR MENÜ -->
@@ -236,7 +225,6 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
       <div class="mini-list" id="countdown-list"></div>
     </div>
 
-    <!-- BÜYÜTÜLEBİLİR VE FOTOĞRAF YÜKLENEBİLİR YAPAY ZEKA PANELİ -->
     <div class="ai-panel" id="ai-panel">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
         <h3 class="panel-title" id="ai-title" style="margin:0;">✦ 67</h3>
@@ -246,5 +234,504 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
         </div>
       </div>
       <div class="ai-chat-box" id="ai-chat-box">
-        <div class="ai-msg assistant">Selam! Ben 67. Bana fotoğraf yükleyebilir, soru sorabilir ya da çizdirebilirsin ✦</div>
+        <div class="ai-msg assistant">Selam! Ben 67. Bana resim çizdirebilir, fotoğraf sorabilir veya sohbet edebilirsin ✦</div>
       </div>
+      <div class="ai-input-row">
+        <input type="file" id="ai-file-in" accept="image/*" onchange="previewAiFile(event)" style="display:none">
+        <button onclick="document.getElementById('ai-file-in').click()" style="background:var(--surface);border:1px solid var(--border);color:var(--accent);padding:6px;border-radius:4px;cursor:pointer;" title="Fotoğraf Yükle">📷</button>
+        <input class="ai-input" id="ai-input" type="text" placeholder="Mesaj yaz veya 'çiz...' de" onkeydown="if(event.key==='Enter')sendAiMsg()">
+        <button class="ai-send-btn" onclick="sendAiMsg()">YAZ</button>
+      </div>
+      <div id="ai-file-preview" style="font-size:0.65rem;color:var(--accent3);margin-top:4px;display:none;"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="spotify-bar" id="spotify-bar" style="display:none;">
+  <div class="spotify-left">
+    <img id="sp-thumb" class="spotify-thumb" src="" alt="">
+    <div class="spotify-meta">
+      <span id="sp-title" class="spotify-title">Şarkı adı</span>
+      <span id="sp-artist" class="spotify-artist">Sanatçı</span>
+    </div>
+  </div>
+  <div class="spotify-center">
+    <button class="spotify-btn main" onclick="togglePlayPause()">▶ / ⏸</button>
+  </div>
+  <div class="spotify-right">
+    <button class="spotify-btn" onclick="toggleMusicVideo()">📺 Klip</button>
+    <button class="spotify-btn" onclick="stopMusic()">⏹️ Kapat</button>
+  </div>
+</div>
+
+<div class="spotify-video-modal" id="spotify-video-modal">
+  <iframe id="music-iframe" src="" allow="autoplay"></iframe>
+</div>
+
+<div class="story-overlay" id="story-overlay">
+  <span class="story-close" onclick="closeStoryCapsule()">✕</span>
+  <div class="story-card">
+    <div class="story-progress-bar" id="story-progress-bar"></div>
+    <div class="story-nav-left" onclick="prevStory()"></div>
+    <div class="story-nav-right" onclick="nextStory()"></div>
+    <div class="story-content" id="story-content"></div>
+    <div class="story-caption" id="story-caption"></div>
+  </div>
+</div>
+
+<input type="file" id="file-in" accept="image/*,video/*" multiple onchange="handleFiles(event)" style="display:none">
+
+<div class="overlay" id="ph-modal">
+  <div class="modal">
+    <h3>medyayı iğnele 📌</h3>
+    <input type="text" id="ph-caption" placeholder="başlık (isteğe bağlı)" maxlength="60">
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('ph-modal')">iptal</button>
+      <button class="m-ok" onclick="confirmPhoto()">iğnele!</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="qu-modal">
+  <div class="modal">
+    <h3>havalı söz ✦</h3>
+    <textarea id="qu-text" placeholder="bir şeyler yaz..." maxlength="300" style="height:80px;"></textarea>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('qu-modal')">iptal</button>
+      <button class="m-ok" onclick="confirmQuote()">ekle!</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="music-modal">
+  <div class="modal" style="width:380px;">
+    <h3>YouTube'da Şarkı Ara 🎵</h3>
+    <input type="text" id="music-search-input" placeholder="Şarkı veya sanatçı adı yaz..." oninput="searchYouTubeSongs()">
+    <div class="search-results" id="search-results-box"></div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('music-modal')">kapat</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="letter-modal">
+  <div class="modal">
+    <h3>geleceğe mektup 💌</h3>
+    <input type="text" id="let-title" placeholder="Mektup Başlığı">
+    <textarea id="let-content" placeholder="Geleceğe Not..." style="height:70px;"></textarea>
+    <label style="font-size:0.7rem;color:var(--text2);">Açılacağı Tarih:</label>
+    <input type="date" id="let-date">
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('letter-modal')">iptal</button>
+      <button class="m-ok" onclick="confirmLetter()">zarfı kilitle</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="cd-modal">
+  <div class="modal">
+    <h3>geri sayım ekle ⏳</h3>
+    <input type="text" id="cd-title" placeholder="Örn: Yılbaşı / Buluşma">
+    <input type="date" id="cd-date">
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('cd-modal')">iptal</button>
+      <button class="m-ok" onclick="confirmCountdown()">başlat</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ai-settings-modal">
+  <div class="modal">
+    <h3>yapay zeka ayarı ✦</h3>
+    <input type="text" id="ai-name-input" placeholder="Asistan Adı (Örn: 67)">
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal('ai-settings-modal')">iptal</button>
+      <button class="m-ok" onclick="saveAiSettings()">kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+let aiName = '67';
+let pendingFile = null;
+let allMediaItems = [];
+let pendingAiFile = null;
+
+let audioCtx = null;
+let currentAmbNode = null;
+let currentAmbType = null;
+
+function triggerFileInput() {
+  document.getElementById('file-in').click();
+}
+
+function toggleMenu(e) {
+  if(e) e.stopPropagation();
+  const menu = document.getElementById('menu-popup');
+  menu.classList.toggle('open');
+}
+
+function closeMenu() {
+  document.getElementById('menu-popup').classList.remove('open');
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.menu-popup') && !e.target.closest('.add-zone-btn')) {
+    closeMenu();
+  }
+});
+
+function toggleAiExpand() {
+  const panel = document.getElementById('ai-panel');
+  panel.classList.toggle('expanded');
+  document.getElementById('ai-expand-btn').textContent = panel.classList.contains('expanded') ? '🗗' : '🗖';
+}
+
+function previewAiFile(e) {
+  if (e.target.files[0]) {
+    pendingAiFile = e.target.files[0];
+    const prev = document.getElementById('ai-file-preview');
+    prev.textContent = `Seçilen dosya: ${pendingAiFile.name}`;
+    prev.style.display = 'block';
+  }
+}
+
+function toggleAmb(type, btn) {
+  if (currentAmbType === type) {
+    if (currentAmbNode) { currentAmbNode.stop(); currentAmbNode = null; }
+    currentAmbType = null;
+    btn.classList.remove('active');
+    return;
+  }
+  if (currentAmbNode) { currentAmbNode.stop(); currentAmbNode = null; document.querySelectorAll('.amb-btn').forEach(b => b.classList.remove('active')); }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  const bufferSize = audioCtx.sampleRate * 3;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+  const whiteNoise = audioCtx.createBufferSource();
+  whiteNoise.buffer = noiseBuffer; whiteNoise.loop = true;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
+  filter.frequency.setValueAtTime(type === 'rain' ? 500 : 300, audioCtx.currentTime);
+
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+
+  whiteNoise.connect(filter); filter.connect(gainNode); gainNode.connect(audioCtx.destination);
+  whiteNoise.start();
+  currentAmbNode = whiteNoise; currentAmbType = type;
+  btn.classList.add('active');
+}
+
+async function init() {
+  const savedTheme = localStorage.getItem('zw_theme') || 'midnight';
+  setTheme(savedTheme, document.querySelector(`[data-t="${savedTheme}"]`));
+  await Promise.all([loadPhotos(), loadQuotes(), loadLetters(), loadCountdowns(), loadMusic(), loadAiSettings()]);
+  updateEmpty();
+}
+
+function setTheme(name, btn) {
+  document.body.setAttribute('data-theme', name);
+  document.querySelectorAll('.th-btn').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  localStorage.setItem('zw_theme', name);
+}
+
+function makeDraggable(el, id, endpoint) {
+  let isDragging = false, startX, startY, initialX, initialY;
+  el.addEventListener('mousedown', (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'VIDEO') return;
+    isDragging = true; startX = e.clientX; startY = e.clientY; initialX = el.offsetLeft; initialY = el.offsetTop; el.style.zIndex = 100;
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    el.style.left = (initialX + (e.clientX - startX)) + 'px';
+    el.style.top = (initialY + (e.clientY - startY)) + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false; el.style.zIndex = 10;
+    fetch(`${API}/api/${endpoint}/${id}/pos`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ x: el.offsetLeft, y: el.offsetTop }) });
+  });
+}
+
+async function loadPhotos() {
+  const res = await fetch(`${API}/api/photos`);
+  allMediaItems = await res.json();
+  allMediaItems.forEach(renderPhoto);
+}
+
+function handleFiles(e) {
+  if (e.target.files[0]) {
+    pendingFile = e.target.files[0];
+    document.getElementById('ph-caption').value = '';
+    document.getElementById('ph-modal').classList.add('open');
+  }
+  e.target.value = '';
+}
+
+async function confirmPhoto() {
+  if (!pendingFile) return;
+  const caption = document.getElementById('ph-caption').value.trim();
+  const fd = new FormData(); fd.append('image', pendingFile); fd.append('caption', caption);
+  closeModal('ph-modal'); showToast('medya sıkıştırılıp yükleniyor... 📌');
+  const res = await fetch(`${API}/api/photos`, { method: 'POST', body: fd });
+  if (res.ok) {
+    const item = await res.json();
+    allMediaItems.push(item); renderPhoto(item); updateEmpty(); showToast('iğnelendi! 📌');
+  }
+  pendingFile = null;
+}
+
+function renderPhoto(p) {
+  const items = document.getElementById('board-items');
+  const el = document.createElement('div');
+  el.className = 'pinned-photo' + (p.taped ? ' taped' : '');
+  el.style.left = (p.x || (Math.random() * 400 + 40)) + 'px';
+  el.style.top = (p.y || (Math.random() * 300 + 40)) + 'px';
+  el.style.setProperty('--rot', p.rot + 'deg');
+  const mediaHtml = p.media_type === 'video' ? `<video src="${p.url}" autoplay loop muted playsinline controls></video>` : `<img src="${p.url}" alt="" loading="lazy">`;
+  el.innerHTML = `<div class="pin-tack"><div class="pin-head"></div><div class="pin-shaft"></div></div><button class="photo-del" onclick="delPhoto('${p.id}',this)">✕</button><div class="photo-frame">${mediaHtml}${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}</div>`;
+  items.appendChild(el); makeDraggable(el, p.id, 'photos');
+}
+
+async function delPhoto(id, btn) {
+  await fetch(`${API}/api/photos/${id}`, { method: 'DELETE' });
+  btn.closest('.pinned-photo').remove(); updateEmpty();
+}
+
+function openMusicModal() { document.getElementById('music-modal').classList.add('open'); document.getElementById('music-search-input').value = ''; document.getElementById('search-results-box').innerHTML = ''; }
+
+let searchTimeout = null;
+function searchYouTubeSongs() {
+  clearTimeout(searchTimeout);
+  const q = document.getElementById('music-search-input').value.trim();
+  if (!q) { document.getElementById('search-results-box').innerHTML = ''; return; }
+  searchTimeout = setTimeout(async () => {
+    const res = await fetch(`${API}/api/youtube/search?q=${encodeURIComponent(q)}`);
+    const results = await res.json();
+    const box = document.getElementById('search-results-box');
+    box.innerHTML = '';
+    results.forEach(song => {
+      const div = document.createElement('div');
+      div.className = 'search-item';
+      div.innerHTML = `<img src="${song.thumb}"><div><div style="font-size:0.75rem;font-weight:600;">${esc(song.title)}</div><div style="font-size:0.6rem;color:#aaa;">${esc(song.channel)}</div></div>`;
+      div.onclick = () => addSongToPlaylist(song);
+      box.appendChild(div);
+    });
+  }, 400);
+}
+
+async function addSongToPlaylist(song) {
+  closeModal('music-modal');
+  const res = await fetch(`${API}/api/playlist`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(song) });
+  if (res.ok) { loadMusic(); playMusic(song.videoId, song.title, song.channel, song.thumb); showToast('şarkı eklendi 🎵'); }
+}
+
+async function loadMusic() {
+  const res = await fetch(`${API}/api/playlist`);
+  const list = await res.json();
+  const box = document.getElementById('music-list');
+  box.innerHTML = '';
+  list.forEach(track => {
+    const div = document.createElement('div');
+    div.className = 'mini-item';
+    div.innerHTML = `<span onclick="playMusic('${track.videoId}', '${esc(track.title)}', '${esc(track.channel)}', '${track.thumb}')" style="cursor:pointer;">▶️ ${esc(track.title)}</span><button onclick="delMusic('${track.videoId}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button>`;
+    box.appendChild(div);
+  });
+}
+
+function playMusic(videoId, title, channel, thumb) {
+  document.getElementById('spotify-bar').style.display = 'flex';
+  document.getElementById('sp-title').textContent = title;
+  document.getElementById('sp-artist').textContent = channel || 'YouTube Music';
+  if (thumb) document.getElementById('sp-thumb').src = thumb;
+  document.getElementById('music-iframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+}
+
+function toggleMusicVideo() {
+  const modal = document.getElementById('spotify-video-modal');
+  modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
+function togglePlayPause() {
+  const iframe = document.getElementById('music-iframe');
+  iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+}
+
+function stopMusic() {
+  document.getElementById('spotify-bar').style.display = 'none';
+  document.getElementById('spotify-video-modal').style.display = 'none';
+  document.getElementById('music-iframe').src = '';
+}
+
+async function delMusic(videoId) {
+  await fetch(`${API}/api/playlist/${videoId}`, { method: 'DELETE' });
+  loadMusic();
+}
+
+let currentStoryIdx = 0;
+let storyTimer = null;
+
+function openStoryCapsule() {
+  if (allMediaItems.length === 0) return alert('Anı Kapsülü için panoya en az 1 medya eklemelisin!');
+  currentStoryIdx = 0;
+  document.getElementById('story-overlay').classList.add('open');
+  setupStories();
+}
+
+function setupStories() {
+  const bar = document.getElementById('story-progress-bar');
+  bar.innerHTML = '';
+  allMediaItems.forEach((_, idx) => {
+    bar.innerHTML += `<div class="story-progress-step"><div class="story-progress-fill" id="story-fill-${idx}"></div></div>`;
+  });
+  showStory(currentStoryIdx);
+}
+
+function showStory(idx) {
+  if (idx < 0 || idx >= allMediaItems.length) { closeStoryCapsule(); return; }
+  currentStoryIdx = idx;
+  const item = allMediaItems[idx];
+  const box = document.getElementById('story-content');
+  const cap = document.getElementById('story-caption');
+  
+  box.innerHTML = item.media_type === 'video' ? `<video src="${item.url}" autoplay loop playsinline></video>` : `<img src="${item.url}">`;
+  cap.textContent = item.caption || 'Anı ✦';
+
+  allMediaItems.forEach((_, i) => {
+    const el = document.getElementById(`story-fill-${i}`);
+    if (el) el.style.width = i < idx ? '100%' : '0%';
+  });
+
+  if (storyTimer) clearInterval(storyTimer);
+  let pct = 0;
+  const activeFill = document.getElementById(`story-fill-${idx}`);
+  storyTimer = setInterval(() => {
+    pct += 2;
+    if (activeFill) activeFill.style.width = pct + '%';
+    if (pct >= 100) { clearInterval(storyTimer); nextStory(); }
+  }, 100);
+}
+
+function nextStory() { showStory(currentStoryIdx + 1); }
+function prevStory() { showStory(currentStoryIdx - 1); }
+function closeStoryCapsule() {
+  if (storyTimer) clearInterval(storyTimer);
+  document.getElementById('story-overlay').classList.remove('open');
+}
+
+async function loadQuotes() {
+  const res = await fetch(`${API}/api/quotes`);
+  const quotes = await res.json();
+  quotes.forEach(renderQuote);
+}
+
+function openQuoteModal() { document.getElementById('qu-modal').classList.add('open'); }
+async function confirmQuote() {
+  const text = document.getElementById('qu-text').value.trim();
+  if (!text) return; closeModal('qu-modal');
+  const res = await fetch(`${API}/api/quotes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+  if (res.ok) { const q = await res.json(); renderQuote(q); updateEmpty(); showToast('söz eklendi ✦'); }
+}
+
+function renderQuote(q) {
+  const items = document.getElementById('board-items');
+  const el = document.createElement('div');
+  el.className = `q-bubble ${q.style || ''}`;
+  el.style.left = (q.x || (Math.random() * 400 + 40)) + 'px'; el.style.top = (q.y || (Math.random() * 300 + 40)) + 'px';
+  el.innerHTML = `<div class="q-text">${esc(q.text)}</div><div class="q-footer"><span class="q-stars">★★★</span><button class="q-del" onclick="delQuote('${q.id}',this)">✕</button></div>`;
+  items.appendChild(el); makeDraggable(el, q.id, 'quotes');
+}
+async function delQuote(id, btn) { await fetch(`${API}/api/quotes/${id}`, { method: 'DELETE' }); btn.closest('.q-bubble').remove(); updateEmpty(); }
+
+function openLetterModal() { document.getElementById('letter-modal').classList.add('open'); }
+async function confirmLetter() {
+  const title = document.getElementById('let-title').value.trim();
+  const content = document.getElementById('let-content').value.trim();
+  const unlockDate = document.getElementById('let-date').value;
+  if (!title || !content || !unlockDate) return; closeModal('letter-modal');
+  const res = await fetch(`${API}/api/letters`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, content, unlockDate }) });
+  if (res.ok) { const l = await res.json(); renderLetter(l); updateEmpty(); showToast('mektup mühürlendi 💌'); }
+}
+async function loadLetters() { const res = await fetch(`${API}/api/letters`); const letters = await res.json(); letters.forEach(renderLetter); }
+function renderLetter(l) {
+  const items = document.getElementById('board-items');
+  const el = document.createElement('div'); el.className = 'envelope-item'; el.style.left = (Math.random() * 400 + 40) + 'px'; el.style.top = (Math.random() * 300 + 40) + 'px';
+  el.innerHTML = `<div class="envelope-box" onclick="alert('💌 Mektup: ${esc(l.title)}\\n\\n${esc(l.content)}')">💌 ${esc(l.title)}</div><button class="env-del" onclick="delLetter('${l.id}', this)">✕</button>`;
+  items.appendChild(el);
+}
+async function delLetter(id, btn) { await fetch(`${API}/api/letters/${id}`, { method: 'DELETE' }); btn.closest('.envelope-item').remove(); updateEmpty(); }
+
+function openCountdownModal() { document.getElementById('cd-modal').classList.add('open'); }
+async function confirmCountdown() {
+  const title = document.getElementById('cd-title').value.trim();
+  const targetDate = document.getElementById('cd-date').value;
+  if (!title || !targetDate) return; closeModal('cd-modal');
+  const res = await fetch(`${API}/api/countdowns`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, targetDate }) });
+  if (res.ok) loadCountdowns();
+}
+async function loadCountdowns() {
+  const res = await fetch(`${API}/api/countdowns`);
+  const list = await res.json(); const box = document.getElementById('countdown-list'); box.innerHTML = '';
+  list.forEach(c => {
+    const daysLeft = Math.ceil((new Date(c.targetDate) - new Date()) / (1000 * 60 * 60 * 24));
+    box.innerHTML += `<div class="mini-item"><span><b>${esc(c.title)}</b>: ${daysLeft > 0 ? daysLeft + ' gün kaldı' : 'Vakti geldi!'}</span><button onclick="delCd('${c.id}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button></div>`;
+  });
+}
+async function delCd(id) { await fetch(`${API}/api/countdowns/${id}`, { method: 'DELETE' }); loadCountdowns(); }
+
+async function loadAiSettings() { const res = await fetch(`${API}/api/settings`); const data = await res.json(); if (data.aiName) { aiName = data.aiName; document.getElementById('ai-title').textContent = '✦ ' + aiName; } }
+function openAiSettingsModal() { document.getElementById('ai-name-input').value = aiName; document.getElementById('ai-settings-modal').classList.add('open'); }
+async function saveAiSettings() { const newName = document.getElementById('ai-name-input').value.trim(); if (!newName) return; aiName = newName; document.getElementById('ai-title').textContent = '✦ ' + aiName; closeModal('ai-settings-modal'); await fetch(`${API}/api/settings`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ aiName }) }); }
+
+async function sendAiMsg() {
+  const input = document.getElementById('ai-input');
+  const prompt = input.value.trim();
+  if (!prompt && !pendingAiFile) return;
+
+  const chatBox = document.getElementById('ai-chat-box');
+  let filePreviewHtml = pendingAiFile ? `<br><span style="font-size:0.65rem;color:var(--accent);">[Fotoğraf eklendi]</span>` : '';
+  chatBox.innerHTML += `<div class="ai-msg user">${esc(prompt)}${filePreviewHtml}</div>`;
+  input.value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  const loading = document.createElement('div');
+  loading.className = 'ai-msg assistant';
+  loading.textContent = 'Düşünüyor...';
+  chatBox.appendChild(loading);
+
+  const fd = new FormData();
+  fd.append('prompt', prompt);
+  fd.append('aiName', aiName);
+  if (pendingAiFile) {
+    fd.append('image', pendingAiFile);
+    pendingAiFile = null;
+    document.getElementById('ai-file-preview').style.display = 'none';
+  }
+
+  try {
+    const res = await fetch(`${API}/api/ai/chat`, { method: 'POST', body: fd });
+    const data = await res.json();
+    loading.innerHTML = esc(data.text) + (data.image ? `<br><img src="${data.image}">` : '');
+  } catch (err) {
+    loading.textContent = 'Yapay zeka yanıt veremedi.';
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+function updateEmpty() { document.getElementById('board-empty').style.display = document.getElementById('board-items').children.length > 1 ? 'none' : 'flex'; }
+function esc(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+
+init();
+</script>
+</body>
+</html>
