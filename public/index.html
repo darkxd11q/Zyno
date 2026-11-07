@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zeynep World</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Caveat:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Caveat:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
 
 <style>
+/* ═══════════════════════════════════════ THEMES ══ */
 :root {
   --bg:        #080810;
   --bg2:       #0e0e1a;
+  --bg3:       #141424;
   --surface:   #18182c;
   --surface2:  #201e38;
   --border:    #2c2848;
@@ -21,272 +23,750 @@
   --text2:     #9988cc;
   --text3:     #554e88;
   --pin:       #ff3d6b;
+  --shadow:    0 8px 32px rgba(123,94,248,0.22);
   --cork:      linear-gradient(135deg,#161628 0%,#1a1830 100%);
+  --tape:      rgba(196,170,255,0.14);
   --fd:        'Playfair Display', serif;
   --fh:        'Caveat', cursive;
   --fb:        'DM Sans', sans-serif;
+  --fbb:       'Bebas Neue', sans-serif;
   --bubble-bg: #1e1c34;
+  --bubble-alt:#221e3a;
 }
 [data-theme="pastel"] {
-  --bg: #fdf5f0; --bg2: #fef9f5; --surface: #fff6f1; --surface2: #ffe8de;
-  --border: #f0cfc2; --accent: #d4789a; --text: #4a2e3c; --text2: #8a6070; --cork: linear-gradient(135deg,#fef0e8 0%,#fde8e0 100%);
+  --bg:        #fdf5f0;
+  --bg2:       #fef9f5;
+  --bg3:       #fff0e8;
+  --surface:   #fff6f1;
+  --surface2:  #ffe8de;
+  --border:    #f0cfc2;
+  --accent:    #d4789a;
+  --accent2:   #b55a80;
+  --accent3:   #f0a882;
+  --text:      #4a2e3c;
+  --text2:     #8a6070;
+  --text3:     #c0a0aa;
+  --pin:       #d05878;
+  --shadow:    0 8px 32px rgba(212,120,154,0.2);
+  --cork:      linear-gradient(135deg,#fef0e8 0%,#fde8e0 100%);
+  --tape:      rgba(212,120,154,0.18);
+  --bubble-bg: #fff0ea;
+  --bubble-alt:#ffe4da;
 }
 [data-theme="minimal"] {
-  --bg: #f6f5f2; --bg2: #fafaf8; --surface: #ffffff; --surface2: #f0efec;
-  --border: #dddbd8; --accent: #1a1a1a; --text: #111111; --text2: #555555; --cork: linear-gradient(135deg,#edece8 0%,#e8e6e2 100%);
+  --bg:        #f6f5f2;
+  --bg2:       #fafaf8;
+  --bg3:       #efefec;
+  --surface:   #ffffff;
+  --surface2:  #f0efec;
+  --border:    #dddbd8;
+  --accent:    #1a1a1a;
+  --accent2:   #444444;
+  --accent3:   #888888;
+  --text:      #111111;
+  --text2:     #555555;
+  --text3:     #bbbbbb;
+  --pin:       #222222;
+  --shadow:    0 4px 20px rgba(0,0,0,0.08);
+  --cork:      linear-gradient(135deg,#edece8 0%,#e8e6e2 100%);
+  --tape:      rgba(0,0,0,0.07);
+  --fd:        'Cormorant Garamond', serif;
+  --bubble-bg: #f8f7f4;
+  --bubble-alt:#f0efe9;
 }
 
+/* ═══════════════════════════════════════ RESET ══ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{ font-family:var(--fb); background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; padding-bottom:80px; }
-
-header{
-  position:sticky;top:0;z-index:200; height:58px;padding:0 20px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--bg);border-bottom:1px solid var(--border); backdrop-filter:blur(24px);
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--fb);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .7s,color .4s;
 }
-.logo{ font-family:var(--fd); font-size:1.3rem; font-style:italic; color:var(--text); display:flex;align-items:center;gap:6px; }
-.logo em{color:var(--accent);font-style:normal;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
 
-.theme-bar{ display:flex;align-items:center;gap:4px; background:var(--surface); border:1px solid var(--border); border-radius:50px;padding:4px 6px; }
-.th-btn{ border:none;cursor:pointer;border-radius:50px;padding:4px 10px; font-family:var(--fb);font-size:.65rem;font-weight:500; color:var(--text3);background:transparent;transition:all .25s; }
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:.5;
+}
+
+/* ═══════════════════════════════════════ LAYOUT ══ */
+header{
+  position:sticky;top:0;z-index:200;
+  height:58px;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(24px);
+  transition:background .7s,border-color .4s;
+}
+
+.logo{
+  font-family:var(--fd);
+  font-size:1.45rem;
+  font-style:italic;
+  color:var(--text);
+  letter-spacing:.01em;
+  display:flex;align-items:center;gap:6px;
+  user-select:none;
+}
+.logo em{color:var(--accent);font-style:normal;}
+.logo .dot{color:var(--accent3);font-size:1.6rem;line-height:1;}
+
+.theme-bar{
+  display:flex;align-items:center;gap:6px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:50px;padding:5px 8px;
+}
+.th-btn{
+  border:none;cursor:pointer;border-radius:50px;
+  padding:5px 13px;
+  font-family:var(--fb);font-size:.7rem;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text3);background:transparent;
+  transition:all .25s;
+}
+.th-btn:hover{color:var(--text);}
 .th-btn.on{background:var(--accent);color:var(--bg);font-weight:700;}
 
-.wrapper{ display:grid; grid-template-columns:1fr 340px; min-height:calc(100vh - 138px); }
-@media(max-width: 900px) {
-  .wrapper { grid-template-columns: 1fr; }
-  aside.sidebar { border-top: 1px solid var(--border); }
+.wrapper{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  min-height:calc(100vh - 58px);
 }
 
-.board-col{ display:grid; grid-template-rows:1fr auto; border-right:1px solid var(--border); position: relative; }
-.corkboard{ padding:0; background:var(--cork); min-height:450px; position:relative; overflow:hidden; }
-.board-items{ position:relative; width:100%; height:100%; min-height:500px; }
-.board-empty{ position:absolute;inset:0; display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px; color:var(--text3);font-family:var(--fh);font-size:1.2rem; pointer-events:none; }
-
-.pinned-photo, .q-bubble, .envelope-item { position: relative; overflow: hidden; z-index: 1; }
-
-.pinned-photo { --fill-color: #ff3d6b; position: absolute; cursor: grab; width: 150px; }
-.photo-frame{ background:#fff; padding:8px 8px 28px; transform:rotate(var(--rot)); box-shadow:3px 5px 18px rgba(0,0,0,.3); }
-.photo-frame img, .photo-frame video { width:134px;height:134px;object-fit:cover;display:block; }
-.photo-caption{ font-family:var(--fh);font-size:.78rem;color:#555;text-align:center;padding:4px 2px 0; }
-.pin-tack{ position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:30; pointer-events:none; }
-.pin-head{ width:12px;height:12px;background:radial-gradient(circle at 38% 32%,#ff99aa,var(--pin)); border-radius:50%; }
-.pin-shaft{ width:2px;height:8px;background:#888;margin:0 auto; }
-.photo-del, .q-del, .env-del{ position:absolute;top:-7px;right:-7px; width:22px;height:22px; background:#ff3d6b; border:none;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:40; }
-.pinned-photo:hover .photo-del, .q-bubble:hover .q-del, .envelope-item:hover .env-del { display:flex; }
-
-.q-bubble{ --fill-color: #7b5ef8; position: absolute; cursor: grab; background:var(--bubble-bg); border:1px solid var(--border); border-radius:20px; padding:14px 16px; max-width:240px; min-width:150px; }
-.q-text{ font-family:var(--fh);font-size:1rem;color:var(--text); }
-.q-footer{ display:flex;align-items:center;justify-content:space-between;margin-top:6px; }
-.q-stars{ color:var(--accent3);font-size:.7rem; }
-
-.envelope-box { --fill-color: #f4e8c1; background: #f4e8c1; color: #4a3b2c; padding: 10px 15px; border-radius: 6px; font-family: var(--fh); font-size: 1rem; text-align: center; width: 140px; cursor: pointer; }
-.envelope-item { position: absolute; }
-
-.add-zones{ display:grid; grid-template-columns: 1fr 1fr; border-top:1px solid var(--border); background:var(--bg2); position: relative; z-index: 50; }
-.add-zone-btn{ height:60px; display:flex;flex-direction:column;align-items:center;justify-content:center; cursor:pointer; border:none; background:transparent;color:var(--text); font-family:var(--fh); font-size:0.95rem; gap:3px; position:relative; width: 100%; transition: background 0.2s; }
-.add-zone-btn:hover { background: var(--surface2); }
-.add-zone-btn:first-child { border-right: 1px solid var(--border); }
-
-.menu-popup {
-  position: absolute; bottom: 70px; right: 15px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 8px; display: none; flex-direction: column; gap: 4px; z-index: 400; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 180px;
+.board-col{
+  display:grid;
+  grid-template-rows:1fr auto;
+  border-right:1px solid var(--border);
 }
-.menu-popup.open { display: flex; }
-.menu-item { background: transparent; border: none; padding: 10px 12px; text-align: left; color: var(--text); font-family: var(--fb); font-size: 0.8rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s; }
-.menu-item:hover { background: var(--surface2); color: var(--accent); }
 
-aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflow-y:auto; }
-.panel{ padding:14px; border-bottom:1px solid var(--border); }
-.panel-title{ font-family:var(--fd);font-size:1rem;font-style:italic;color:var(--text);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center; }
-
-.ambient-row{ display:flex; gap:6px; }
-.amb-btn{ flex:1; padding:7px 4px; background:var(--surface); border:1px solid var(--border); border-radius:4px; font-size:0.7rem; color:var(--text2); cursor:pointer; text-align:center; }
-.amb-btn.active { background: var(--accent); color: var(--bg); font-weight: 700; }
-
-.mini-list{ max-height:100px; overflow-y:auto; display:flex;flex-direction:column;gap:5px; }
-.mini-item{ background:var(--surface); border:1px solid var(--border); padding:6px 10px; border-radius:4px; font-size:0.72rem; display:flex;justify-content:space-between;align-items:center; }
-
-.ai-panel{ padding:14px; border-bottom:1px solid var(--border); display:flex;flex-direction:column; flex:1; transition: all 0.3s ease; }
-.ai-panel.expanded { position: fixed; inset: 20px; z-index: 900; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,0.9); }
-.ai-chat-box{ flex:1; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:8px; max-height:150px; overflow-y:auto; display:flex;flex-direction:column;gap:8px; margin-bottom:8px; }
-.ai-panel.expanded .ai-chat-box { max-height: calc(100vh - 200px); }
-.ai-msg{ font-size:0.75rem; padding:6px 8px; border-radius:6px; line-height:1.4; max-width:90%; word-break:break-word; }
-.ai-msg.user{ background:var(--surface2); color:var(--text); align-self:flex-end; }
-.ai-msg.assistant{ background:var(--surface); color:var(--text2); align-self:flex-start; border:1px solid var(--border); }
-.ai-msg img { width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; margin-top: 6px; }
-.ai-input-row{ display:flex; gap:5px; align-items:center; }
-.ai-input{ flex:1; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:6px; font-size:0.72rem; color:var(--text); outline:none; }
-.ai-send-btn{ padding:6px 9px; background:var(--accent); border:none; border-radius:4px; color:var(--bg); font-weight:700; font-size:0.68rem; cursor:pointer; }
-
-.spotify-bar {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #121212; border-top: 1px solid #282828;
-  display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 500; font-family: var(--fb); color: #fff;
+.corkboard{
+  padding:36px 36px 28px;
+  background:var(--cork);
+  min-height:520px;
+  position:relative;
+  overflow:hidden;
 }
-.spotify-left { display: flex; align-items: center; gap: 10px; width: 220px; }
-.spotify-thumb { width: 42px; height: 42px; background: #282828; border-radius: 4px; object-fit: cover; }
-.spotify-meta { display: flex; flex-direction: column; overflow: hidden; }
-.spotify-title { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.spotify-artist { font-size: 0.65rem; color: #b3b3b3; }
-.spotify-center { display: flex; align-items: center; gap: 12px; }
-.spotify-btn { background: none; border: none; color: #b3b3b3; font-size: 0.9rem; cursor: pointer; transition: color 0.2s; }
-.spotify-btn:hover { color: #fff; }
-.spotify-btn.main { width: 30px; height: 30px; background: #fff; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
-.spotify-right { display: flex; align-items: center; gap: 10px; }
-.spotify-video-modal { position: fixed; bottom: 80px; right: 16px; width: 280px; height: 160px; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 600; display: none; }
-.spotify-video-modal iframe { width: 100%; height: 100%; border: none; }
+.corkboard::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 31px,var(--border) 31px,var(--border) 32px),
+    repeating-linear-gradient(90deg,transparent,transparent 31px,var(--border) 31px,var(--border) 32px);
+  background-size:32px 32px;
+  opacity:.18;pointer-events:none;
+}
 
-.story-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; display:none; flex-direction:column; align-items:center; justify-content:center; backdrop-filter:blur(15px); }
-.story-overlay.open { display:flex; }
-.story-card { width: 320px; height: 540px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-.story-progress-bar { display: flex; gap: 4px; padding: 12px 12px 0; position: absolute; top: 0; left: 0; right: 0; z-index: 20; }
-.story-progress-step { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
-.story-progress-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
-.story-content { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-.story-content img, .story-content video { width: 100%; height: 100%; object-fit: cover; }
-.story-caption { position: absolute; bottom: 25px; left: 15px; right: 15px; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; backdrop-filter: blur(8px); color: #fff; font-family: var(--fh); font-size: 1.1rem; text-align: center; }
-.story-nav-left, .story-nav-right { position: absolute; top: 0; bottom: 0; width: 45%; z-index: 10; cursor: pointer; }
-.story-nav-left { left: 0; } .story-nav-right { right: 0; }
-.story-close { position: absolute; top: 15px; right: 15px; color: #fff; font-size: 22px; cursor: pointer; z-index: 30; }
+.board-items{
+  display:flex;flex-wrap:wrap;
+  gap:28px 24px;
+  align-items:flex-start;
+  position:relative;z-index:1;
+}
 
-.overlay{ position:fixed;inset:0; background:rgba(0,0,0,.72); display:none;align-items:center;justify-content:center; z-index:700; backdrop-filter:blur(10px); }
+.board-empty{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  color:var(--text3);font-family:var(--fh);font-size:1.2rem;
+  pointer-events:none;opacity:.7;
+}
+.board-empty svg{opacity:.5;}
+
+.pinned-photo{
+  position:relative;display:inline-block;
+  animation:pinDrop .45s cubic-bezier(.34,1.56,.64,1) both;
+  flex-shrink:0;
+  --rot:2deg;
+}
+@keyframes pinDrop{
+  from{transform:scale(.4) rotate(var(--rot));opacity:0;filter:blur(4px);}
+  to{transform:scale(1) rotate(var(--rot));opacity:1;filter:blur(0);}
+}
+
+.photo-frame{
+  background:#fff;
+  padding:9px 9px 30px;
+  transform:rotate(var(--rot));
+  box-shadow:3px 5px 18px rgba(0,0,0,.3),1px 2px 3px rgba(0,0,0,.15);
+  transition:transform .22s,box-shadow .22s;
+  max-width:158px;
+}
+.pinned-photo:hover .photo-frame{
+  transform:rotate(0deg) scale(1.07);
+  box-shadow:8px 14px 36px rgba(0,0,0,.4);
+  z-index:50;position:relative;
+}
+.photo-frame img{
+  width:140px;height:140px;
+  object-fit:cover;display:block;
+}
+.photo-caption{
+  font-family:var(--fh);font-size:.8rem;
+  color:#555;text-align:center;
+  padding:5px 2px 0;line-height:1.25;
+  min-height:16px;
+}
+
+.pin-tack{
+  position:absolute;top:-12px;left:50%;
+  transform:translateX(-50%);
+  z-index:30;pointer-events:none;
+}
+.pin-head{
+  width:14px;height:14px;
+  background:radial-gradient(circle at 38% 32%,#ff99aa,var(--pin));
+  border-radius:50%;
+  border:1.5px solid rgba(0,0,0,.22);
+  box-shadow:inset -2px -2px 5px rgba(0,0,0,.3),0 2px 5px rgba(0,0,0,.35);
+}
+.pin-shaft{
+  width:2px;height:9px;
+  background:linear-gradient(to bottom,#ccc,#888);
+  margin:0 auto;
+  border-radius:0 0 2px 2px;
+  box-shadow:1px 0 2px rgba(0,0,0,.2);
+}
+
+.pinned-photo.taped .photo-frame::before{
+  content:'';
+  position:absolute;top:-9px;left:50%;
+  transform:translateX(-50%) rotate(var(--tape-rot,0deg));
+  width:52px;height:18px;
+  background:var(--tape);
+  backdrop-filter:blur(2px);
+  border:1px solid rgba(255,255,255,.15);
+  z-index:25;
+}
+
+.photo-del{
+  position:absolute;top:-7px;right:-7px;
+  width:22px;height:22px;
+  background:#ff3d6b;border:none;border-radius:50%;
+  color:#fff;font-size:11px;
+  cursor:pointer;display:none;
+  align-items:center;justify-content:center;
+  z-index:40;transition:transform .15s;
+  box-shadow:0 2px 6px rgba(255,61,107,.5);
+}
+.pinned-photo:hover .photo-del{display:flex;}
+.photo-del:hover{transform:scale(1.25);}
+
+.q-bubble{
+  position:relative;
+  background:var(--bubble-bg);
+  border:1px solid var(--border);
+  border-radius:20px 20px 20px 4px;
+  padding:15px 18px 12px;
+  max-width:300px;min-width:160px;
+  animation:bubPop .4s cubic-bezier(.34,1.56,.64,1) both;
+  flex-shrink:0;
+  transition:background .6s,border-color .4s;
+}
+.q-bubble.alt{
+  border-radius:20px 20px 4px 20px;
+  background:var(--bubble-alt);
+}
+.q-bubble.center{
+  border-radius:20px;
+  max-width:260px;
+}
+@keyframes bubPop{
+  from{transform:scale(.2) translateY(30px);opacity:0;}
+  to{transform:scale(1) translateY(0);opacity:1;}
+}
+
+.q-bubble::after{
+  content:'';position:absolute;
+  bottom:-11px;left:18px;
+  border:11px solid transparent;
+  border-top-color:var(--border);
+  border-bottom:0;
+}
+.q-bubble::before{
+  content:'';position:absolute;
+  bottom:-9px;left:19px;
+  border:10px solid transparent;
+  border-top-color:var(--bubble-bg);
+  border-bottom:0;z-index:1;
+  transition:border-top-color .6s;
+}
+.q-bubble.alt::after{left:auto;right:18px;}
+.q-bubble.alt::before{left:auto;right:19px;border-top-color:var(--bubble-alt);}
+.q-bubble.center::after,.q-bubble.center::before{display:none;}
+
+.q-text{
+  font-family:var(--fh);font-size:1.05rem;
+  color:var(--text);line-height:1.55;
+}
+.q-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:7px;
+}
+.q-stars{color:var(--accent3);font-size:.72rem;letter-spacing:2px;}
+.q-del{
+  background:none;border:none;
+  color:var(--text3);cursor:pointer;
+  font-size:.72rem;padding:2px 6px;
+  border-radius:4px;transition:all .15s;
+}
+.q-del:hover{background:rgba(255,61,107,.15);color:#ff3d6b;}
+
+.add-zones{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--border);
+}
+
+.add-zone{
+  height:88px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:background .25s;
+  border:none;background:transparent;
+  color:var(--text3);
+}
+.add-zone:first-child{border-right:1px solid var(--border);}
+.add-zone:hover{background:var(--surface);}
+
+.az-inner{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .22s,transform .22s;
+}
+.add-zone:hover .az-inner{opacity:1;transform:translateY(0);}
+
+.az-icon{
+  width:32px;height:32px;
+  border:1.5px solid var(--border);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);
+  transition:border-color .2s,background .2s;
+}
+.add-zone:hover .az-icon{
+  border-color:var(--accent);
+  background:var(--accent);
+  color:var(--bg);
+}
+.az-label{
+  font-family:var(--fh);font-size:.95rem;
+  letter-spacing:.02em;color:var(--text2);
+  transition:color .2s;
+}
+.add-zone:hover .az-label{color:var(--accent);}
+
+/* ═══════════════════════════════════════ SIDEBAR ══ */
+aside.sidebar{
+  display:flex;flex-direction:column;
+  background:var(--bg2);overflow-y:auto;
+}
+
+.music-panel{
+  padding:22px 20px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.panel-title{
+  font-family:var(--fd);font-size:1.2rem;
+  font-style:italic;color:var(--text);
+  margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+.search-row{display:flex;gap:8px;margin-bottom:12px;}
+.msearch{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:4px;padding:8px 12px;
+  font-family:var(--fb);font-size:.78rem;color:var(--text);
+  outline:none;transition:border-color .25s;
+}
+.msearch:focus{border-color:var(--accent);}
+.msearch::placeholder{color:var(--text3);}
+.msrch-btn{
+  padding:8px 12px;background:var(--accent);
+  border:none;border-radius:4px;
+  color:var(--bg);font-size:.72rem;font-weight:700;
+  letter-spacing:.06em;cursor:pointer;transition:opacity .2s;
+}
+.msrch-btn:hover{opacity:.8;}
+
+#yt-wrap{
+  width:100%;aspect-ratio:16/9;
+  background:#000;border-radius:5px;overflow:hidden;
+  margin-bottom:10px;display:none;
+}
+#yt-wrap iframe{width:100%;height:100%;border:none;}
+
+.now-pl{
+  font-family:var(--fh);font-size:.88rem;
+  color:var(--text2);margin-bottom:10px;
+  min-height:16px;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+.ctrl-row{
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:10px;
+}
+.cb{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text);
+  transition:all .2s;font-size:12px;flex-shrink:0;
+}
+.cb:hover,.cb.pp{background:var(--accent);border-color:var(--accent);color:var(--bg);}
+.cb.pp{width:38px;height:38px;font-size:14px;}
+.vol-sl{
+  flex:1;-webkit-appearance:none;
+  height:3px;background:var(--border);
+  border-radius:10px;outline:none;cursor:pointer;
+}
+.vol-sl::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:10px;height:10px;
+  background:var(--accent);border-radius:50%;
+}
+
+.results-list{
+  max-height:180px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:5px;
+}
+.res-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:5px;
+  cursor:pointer;transition:all .18s;
+}
+.res-item:hover{border-color:var(--accent);transform:translateX(3px);}
+.res-thumb{
+  width:48px;height:34px;object-fit:cover;
+  border-radius:3px;flex-shrink:0;
+  background:var(--bg3);
+}
+.res-info{min-width:0;}
+.res-title{
+  font-size:.74rem;color:var(--text);
+  display:-webkit-box;-webkit-line-clamp:2;
+  -webkit-box-orient:vertical;overflow:hidden;line-height:1.3;
+}
+.res-ch{font-size:.64rem;color:var(--text3);margin-top:2px;}
+
+/* ═══════════════════════════════════════ AI ASSISTANT PANEL ══ */
+.ai-panel{
+  padding:20px;
+  border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;
+  flex:1;
+  min-height:300px;
+}
+.ai-header-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.ai-settings-btn{
+  background:none;border:none;color:var(--text3);
+  cursor:pointer;font-size:.9rem;padding:2px 6px;border-radius:4px;
+  transition:all .2s;
+}
+.ai-settings-btn:hover{color:var(--accent);background:var(--surface);}
+
+.ai-chat-box{
+  flex:1;background:var(--bg);
+  border:1px solid var(--border);border-radius:6px;
+  padding:10px;max-height:220px;min-height:150px;
+  overflow-y:auto;display:flex;flex-direction:column;gap:8px;
+  margin-bottom:10px;
+}
+.ai-msg{
+  font-size:.8rem;padding:8px 10px;border-radius:6px;line-height:1.4;
+  max-width:90%;word-break:break-word;
+}
+.ai-msg.user{
+  background:var(--surface2);color:var(--text);
+  align-self:flex-end;border-bottom-right-radius:2px;
+}
+.ai-msg.assistant{
+  background:var(--surface);color:var(--text2);
+  align-self:flex-start;border-bottom-left-radius:2px;
+  border:1px solid var(--border);
+}
+.ai-msg img{
+  width:100%;max-height:140px;object-fit:cover;
+  border-radius:4px;margin-top:6px;display:block;
+}
+
+.ai-input-row{display:flex;gap:6px;align-items:center;}
+.ai-input{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:4px;padding:8px 10px;font-family:var(--fb);
+  font-size:.78rem;color:var(--text);outline:none;
+}
+.ai-input:focus{border-color:var(--accent);}
+.ai-attach-btn{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:4px;width:34px;height:34px;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;color:var(--text2);
+  font-size:14px;transition:all .2s;flex-shrink:0;
+}
+.ai-attach-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ai-send-btn{
+  padding:8px 12px;background:var(--accent);border:none;
+  border-radius:4px;color:var(--bg);font-weight:700;font-size:.74rem;
+  cursor:pointer;transition:opacity .2s;flex-shrink:0;
+}
+.ai-send-btn:hover{opacity:.8;}
+.ai-file-preview{
+  font-size:.68rem;color:var(--accent3);margin-bottom:4px;
+  display:none;align-items:center;gap:4px;
+}
+
+/* STATS & MOODS */
+.stats-panel{padding:20px;}
+.stats-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:8px;margin-bottom:14px;
+}
+.stat-c{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:10px;text-align:center;
+}
+.stat-n{
+  font-family:var(--fbb);font-size:1.8rem;
+  color:var(--accent);line-height:1;
+}
+.stat-l{font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+
+.mood-sec .mood-h{
+  font-family:var(--fh);font-size:.86rem;
+  color:var(--text2);margin-bottom:8px;
+}
+.mood-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.mtag{
+  padding:3px 10px;background:var(--surface);
+  border:1px solid var(--border);border-radius:50px;
+  font-family:var(--fh);font-size:.8rem;color:var(--text2);
+  cursor:pointer;transition:all .18s;user-select:none;
+}
+.mtag:hover,.mtag.on{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+
+/* MODALS */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;align-items:center;justify-content:center;
+  z-index:500;backdrop-filter:blur(10px);
+}
 .overlay.open{display:flex;}
-.modal{ background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;width:320px; }
-.modal h3{ font-family:var(--fd);font-size:1.1rem;font-style:italic;color:var(--text);margin-bottom:12px; }
-.modal input,.modal textarea{ width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px; padding:8px;font-size:0.85rem;color:var(--text);outline:none;margin-bottom:8px;resize:none; }
-.modal-btns{display:flex;gap:8px;justify-content:flex-end;}
-.m-cancel{ padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--text2);cursor:pointer;font-size:0.7rem;}
-.m-ok{ padding:6px 16px;background:var(--accent);border:none;border-radius:4px;color:var(--bg);font-weight:700;cursor:pointer;font-size:0.7rem;}
 
-.search-results { max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-.search-item { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 5px; border-radius: 4px; cursor: pointer; border: 1px solid var(--border); }
-.search-item:hover { background: var(--surface2); }
-.search-item img { width: 36px; height: 26px; object-fit: cover; border-radius: 2px; }
+.modal{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:28px 30px;
+  width:340px;
+  box-shadow:0 28px 70px rgba(0,0,0,.55);
+  animation:mIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes mIn{
+  from{transform:scale(.75) translateY(24px);opacity:0;}
+  to{transform:scale(1) translateY(0);opacity:1;}
+}
+.modal h3{
+  font-family:var(--fd);font-size:1.25rem;font-style:italic;
+  color:var(--text);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.modal img{
+  width:100%;height:130px;object-fit:cover;
+  border-radius:4px;margin-bottom:13px;display:none;
+}
+.modal input,.modal textarea{
+  width:100%;background:var(--bg);
+  border:1px solid var(--border);border-radius:4px;
+  padding:11px 14px;font-family:var(--fh);font-size:1rem;
+  color:var(--text);outline:none;margin-bottom:12px;
+  transition:border-color .25s;resize:none;
+}
+.modal input:focus,.modal textarea:focus{border-color:var(--accent);}
+.modal textarea{height:90px;line-height:1.5;}
+.modal-btns{display:flex;gap:9px;justify-content:flex-end;}
+.m-cancel{
+  padding:9px 18px;background:transparent;
+  border:1px solid var(--border);border-radius:4px;
+  color:var(--text2);font-size:.78rem;cursor:pointer;transition:all .2s;
+}
+.m-cancel:hover{border-color:var(--accent);color:var(--text);}
+.m-ok{
+  padding:9px 22px;background:var(--accent);
+  border:none;border-radius:4px;
+  color:var(--bg);font-size:.78rem;font-weight:700;
+  cursor:pointer;transition:opacity .2s;
+}
+.m-ok:hover{opacity:.8;}
 
-.toast{ position:fixed;bottom:80px;right:20px; background:var(--surface);border:1px solid var(--border); border-radius:8px;padding:10px 14px;font-family:var(--fh);font-size:0.9rem;color:var(--text); z-index:1000;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast{
+  position:fixed;bottom:22px;right:22px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:13px 18px;
+  font-family:var(--fh);font-size:1rem;color:var(--text);
+  box-shadow:0 8px 28px rgba(0,0,0,.35);
+  z-index:1000;transform:translateY(70px);opacity:0;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none;
+}
 .toast.show{transform:translateY(0);opacity:1;}
+
+*,*::before,*::after{
+  transition-property:background-color,border-color,color;
+  transition-duration:.5s;transition-timing-function:ease;
+}
+.add-zone,.az-inner,.az-icon,.az-label,.cb,.res-item,.pinned-photo,
+.q-bubble,.th-btn,.mtag,.photo-del,.q-del,
+.photo-frame{
+  transition-property:all;
+  transition-duration:.22s;
+}
 </style>
 </head>
 <body data-theme="midnight">
 
 <header>
-  <div class="logo"><span class="dot">✦</span>Zeynep <em>World</em></div>
+  <div class="logo">
+    <span class="dot">✦</span>
+    Zeynep <em>World</em>
+  </div>
   <div class="theme-bar">
-    <button class="th-btn on" data-t="midnight" onclick="setTheme('midnight',this)">🌙 Midnight</button>
-    <button class="th-btn" data-t="pastel" onclick="setTheme('pastel',this)">🌸 Pastel</button>
-    <button class="th-btn" data-t="minimal" onclick="setTheme('minimal',this)">🤍 Minimal</button>
+    <button class="th-btn on"  data-t="midnight" onclick="setTheme('midnight',this)">🌙 Midnight</button>
+    <button class="th-btn"     data-t="pastel"   onclick="setTheme('pastel',this)">🌸 Pastel</button>
+    <button class="th-btn"     data-t="minimal"  onclick="setTheme('minimal',this)">🤍 Minimal</button>
   </div>
 </header>
 
 <div class="wrapper">
   <div class="board-col">
     <div class="corkboard" id="corkboard">
-      <div class="board-items" id="board-items">
-        <div class="board-empty" id="board-empty">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <span>burası senin dünyan ✦</span>
-        </div>
+      <div class="board-items" id="board-items"></div>
+      <div class="board-empty" id="board-empty">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>burası senin dünyan ✦</span>
       </div>
     </div>
 
     <div class="add-zones">
-      <button type="button" class="add-zone-btn" onclick="triggerFileInput()">🎬 <span>Foto / Video Ekle</span></button>
-      <button type="button" class="add-zone-btn" onclick="toggleMenu(event)">••• <span>Diğer Seçenekler</span></button>
-    </div>
+      <button class="add-zone" onclick="document.getElementById('file-in').click()">
+        <div class="az-inner">
+          <div class="az-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <span class="az-label">ekle</span>
+        </div>
+      </button>
 
-    <div class="menu-popup" id="menu-popup">
-      <button class="menu-item" onclick="openQuoteModal(); closeMenu()">💬 Söz Ekle</button>
-      <button class="menu-item" onclick="openLetterModal(); closeMenu()">💌 Mektup Bırak</button>
-      <button class="menu-item" onclick="openCountdownModal(); closeMenu()">⏳ Geri Sayım</button>
-      <button class="menu-item" onclick="openStoryCapsule(); closeMenu()">📦 Anı Kapsülü</button>
+      <button class="add-zone" onclick="openQuoteModal()">
+        <div class="az-inner">
+          <div class="az-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <span class="az-label">ekle</span>
+        </div>
+      </button>
     </div>
   </div>
 
   <aside class="sidebar">
-    <div class="panel">
-      <!-- SPOTIFY LOGOSU VE İSMİ EKLENDİ -->
+    <!-- Music Panel (Spotify Logosu ve İsmiyle Güncellendi) -->
+    <div class="music-panel">
       <h3 class="panel-title">
         <span style="display:inline-flex;align-items:center;gap:6px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.48.66.24 1.02zm1.44-3.3c-.301.42-.84.6-1.26.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.02.6-1.14 4.32-1.38 9.84-.72 13.62 1.62.42.3.6.84.3 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.3c-.6.18-1.2-.18-1.38-.78-.18-.6.18-1.2.78-1.38C8.8 5.82 15.94 6.12 20.34 8.76c.54.3.72 1.02.42 1.56-.3.54-1.02.72-1.56.42z"/></svg>
           Spotify
         </span>
-        <button onclick="openMusicModal()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.75rem;">+ Şarkı Ara</button>
       </h3>
-      <div class="mini-list" id="music-list"></div>
-    </div>
 
-    <div class="panel">
-      <h3 class="panel-title">🎧 Ortam Sesleri</h3>
-      <div class="ambient-row">
-        <button class="amb-btn" id="btn-rain" onclick="toggleAmb('rain', this)">🌧️ Yağmur</button>
-        <button class="amb-btn" id="btn-fire" onclick="toggleAmb('fire', this)">🔥 Şömine</button>
-        <button class="amb-btn" id="btn-cafe" onclick="toggleAmb('cafe', this)">☕ Kafe</button>
+      <div class="search-row">
+        <input class="msearch" id="ms" type="text" placeholder="şarkı ara..." onkeydown="if(event.key==='Enter')srch()">
+        <button class="msrch-btn" onclick="srch()">ARA</button>
       </div>
+
+      <div id="yt-wrap"><div id="yt-player"></div></div>
+      <div class="now-pl" id="now-pl">şarkı ara ve çal ✦</div>
+
+      <div class="ctrl-row">
+        <button class="cb" onclick="prevT()" title="önceki">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4"/><line x1="5" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2.5"/></svg>
+        </button>
+        <button class="cb pp" id="pp-btn" onclick="togPlay()">
+          <svg id="ic-play"  width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21"/></svg>
+          <svg id="ic-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <button class="cb" onclick="nextT()" title="sonraki">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"/></svg>
+        </button>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <input type="range" class="vol-sl" id="vol" min="0" max="100" value="80" oninput="setVol(this.value)">
+      </div>
+
+      <div class="results-list" id="results"></div>
     </div>
 
-    <div class="panel">
-      <h3 class="panel-title">⏳ Geri Sayımlar</h3>
-      <div class="mini-list" id="countdown-list"></div>
-    </div>
-
-    <div class="ai-panel" id="ai-panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <h3 class="panel-title" id="ai-title" style="margin:0;">✦ 67</h3>
-        <div style="display:flex;gap:6px;">
-          <button onclick="toggleAiExpand()" id="ai-expand-btn" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.8rem;" title="Büyüt/Küçült">🗖</button>
-          <button onclick="openAiSettingsModal()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.8rem;">⚙️</button>
-        </div>
+    <!-- AI Assistant Panel -->
+    <div class="ai-panel">
+      <div class="ai-header-row">
+        <h3 class="panel-title" id="ai-title" style="margin:0;">✦ Zeynep AI</h3>
+        <button class="ai-settings-btn" onclick="openAiSettingsModal()" title="Yapay Zeka Ayarları">⚙️</button>
       </div>
       <div class="ai-chat-box" id="ai-chat-box">
-        <div class="ai-msg assistant">Selam! Ben 67. Bana resim çizdirebilir, fotoğraf sorabilir veya sohbet edebilirsin ✦</div>
+        <div class="ai-msg assistant">Selam! Ben senin yapay zeka asistanınım. Bana bir şeyler sorabilir veya "Cyberpunk sokak resmi çiz" gibi komutlarla görsel üretebilirsin ✦</div>
       </div>
+      <div class="ai-file-preview" id="ai-file-preview">📎 <span id="ai-file-name"></span> seçildi</div>
       <div class="ai-input-row">
-        <input type="file" id="ai-file-in" accept="image/*" onchange="previewAiFile(event)" style="display:none">
-        <button onclick="document.getElementById('ai-file-in').click()" style="background:var(--surface);border:1px solid var(--border);color:var(--accent);padding:6px;border-radius:4px;cursor:pointer;" title="Fotoğraf Yükle">📷</button>
-        <input class="ai-input" id="ai-input" type="text" placeholder="Mesaj yaz veya 'çiz...' de" onkeydown="if(event.key==='Enter')sendAiMsg()">
-        <button class="ai-send-btn" onclick="sendAiMsg()">YAZ</button>
+        <input type="file" id="ai-file-in" accept="image/*" style="display:none" onchange="handleAiFile(event)">
+        <button class="ai-attach-btn" onclick="document.getElementById('ai-file-in').click()" title="Fotoğraf Gönder">📷</button>
+        <input class="ai-input" id="ai-input" type="text" placeholder="Bir şeyler yaz veya çizdir..." onkeydown="if(event.key==='Enter')sendAiMsg()">
+        <button class="ai-send-btn" onclick="sendAiMsg()">GÖNDER</button>
       </div>
-      <div id="ai-file-preview" style="font-size:0.65rem;color:var(--accent3);margin-top:4px;display:none;"></div>
+    </div>
+
+    <!-- Stats & Moods -->
+    <div class="stats-panel">
+      <h3 class="panel-title" style="margin-bottom:12px;">istatistikler ✦</h3>
+      <div class="stats-grid">
+        <div class="stat-c"><div class="stat-n" id="st-ph">0</div><div class="stat-l">fotoğraf</div></div>
+        <div class="stat-c"><div class="stat-n" id="st-qu">0</div><div class="stat-l">söz</div></div>
+        <div class="stat-c"><div class="stat-n" id="st-so">0</div><div class="stat-l">çalınan</div></div>
+        <div class="stat-c"><div class="stat-n" id="st-dy">1</div><div class="stat-l">gün</div></div>
+      </div>
+      <div class="mood-sec">
+        <div class="mood-h">bugünkü his ✦</div>
+        <div class="mood-tags">
+          <span class="mtag" onclick="togMood(this)">🌙 dreamy</span>
+          <span class="mtag" onclick="togMood(this)">🔥 fierce</span>
+          <span class="mtag" onclick="togMood(this)">🌸 soft</span>
+          <span class="mtag" onclick="togMood(this)">⚡ hype</span>
+          <span class="mtag" onclick="togMood(this)">🤍 chill</span>
+          <span class="mtag" onclick="togMood(this)">✨ magic</span>
+          <span class="mtag" onclick="togMood(this)">💔 sad</span>
+          <span class="mtag" onclick="togMood(this)">💫 vibes</span>
+        </div>
+      </div>
     </div>
   </aside>
 </div>
 
-<div class="spotify-bar" id="spotify-bar" style="display:none;">
-  <div class="spotify-left">
-    <img id="sp-thumb" class="spotify-thumb" src="" alt="">
-    <div class="spotify-meta">
-      <span id="sp-title" class="spotify-title">Şarkı adı</span>
-      <span id="sp-artist" class="spotify-artist">Sanatçı</span>
-    </div>
-  </div>
-  <div class="spotify-center">
-    <button class="spotify-btn main" onclick="togglePlayPause()">▶ / ⏸</button>
-  </div>
-  <div class="spotify-right">
-    <button class="spotify-btn" onclick="toggleMusicVideo()">📺 Klip</button>
-    <button class="spotify-btn" onclick="stopMusic()">⏹️ Kapat</button>
-  </div>
-</div>
+<!-- FILE INPUT (Board) -->
+<input type="file" id="file-in" accept="image/*" multiple onchange="handleFiles(event)" style="display:none">
 
-<div class="spotify-video-modal" id="spotify-video-modal">
-  <iframe id="music-iframe" src="" allow="autoplay"></iframe>
-</div>
-
-<div class="story-overlay" id="story-overlay">
-  <span class="story-close" onclick="closeStoryCapsule()">✕</span>
-  <div class="story-card">
-    <div class="story-progress-bar" id="story-progress-bar"></div>
-    <div class="story-nav-left" onclick="prevStory()"></div>
-    <div class="story-nav-right" onclick="nextStory()"></div>
-    <div class="story-content" id="story-content"></div>
-    <div class="story-caption" id="story-caption"></div>
-  </div>
-</div>
-
-<input type="file" id="file-in" accept="image/*,video/*" multiple onchange="handleFiles(event)" style="display:none">
-
+<!-- PHOTO MODAL -->
 <div class="overlay" id="ph-modal">
   <div class="modal">
-    <h3>medyayı iğnele 📌</h3>
+    <h3>fotoğrafı iğnele 📌</h3>
+    <img id="ph-preview" alt="">
     <input type="text" id="ph-caption" placeholder="başlık (isteğe bağlı)" maxlength="60">
     <div class="modal-btns">
       <button class="m-cancel" onclick="closeModal('ph-modal')">iptal</button>
@@ -295,10 +775,11 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </div>
 </div>
 
+<!-- QUOTE MODAL -->
 <div class="overlay" id="qu-modal">
   <div class="modal">
     <h3>havalı söz ✦</h3>
-    <textarea id="qu-text" placeholder="bir şeyler yaz..." maxlength="300" style="height:80px;"></textarea>
+    <textarea id="qu-text" placeholder="bir şeyler yaz..." maxlength="300"></textarea>
     <div class="modal-btns">
       <button class="m-cancel" onclick="closeModal('qu-modal')">iptal</button>
       <button class="m-ok" onclick="confirmQuote()">ekle!</button>
@@ -306,47 +787,12 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </div>
 </div>
 
-<div class="overlay" id="music-modal">
-  <div class="modal" style="width:380px;">
-    <h3>Spotify / Şarkı Ara 🎵</h3>
-    <input type="text" id="music-search-input" placeholder="Şarkı veya sanatçı adı yaz..." oninput="searchYouTubeSongs()">
-    <div class="search-results" id="search-results-box"></div>
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('music-modal')">kapat</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="letter-modal">
-  <div class="modal">
-    <h3>geleceğe mektup 💌</h3>
-    <input type="text" id="let-title" placeholder="Mektup Başlığı">
-    <textarea id="let-content" placeholder="Geleceğe Not..." style="height:70px;"></textarea>
-    <label style="font-size:0.7rem;color:var(--text2);">Açılacağı Tarih:</label>
-    <input type="date" id="let-date">
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('letter-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmLetter()">zarfı kilitle</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="cd-modal">
-  <div class="modal">
-    <h3>geri sayım ekle ⏳</h3>
-    <input type="text" id="cd-title" placeholder="Örn: Yılbaşı / Buluşma">
-    <input type="date" id="cd-date">
-    <div class="modal-btns">
-      <button class="m-cancel" onclick="closeModal('cd-modal')">iptal</button>
-      <button class="m-ok" onclick="confirmCountdown()">başlat</button>
-    </div>
-  </div>
-</div>
-
+<!-- AI SETTINGS MODAL -->
 <div class="overlay" id="ai-settings-modal">
   <div class="modal">
-    <h3>yapay zeka ayarı ✦</h3>
-    <input type="text" id="ai-name-input" placeholder="Asistan Adı (Örn: 67)">
+    <h3>yapay zeka ayarları ✦</h3>
+    <p style="font-size:0.8rem;color:var(--text2);margin-bottom:8px;">Yapay zekanın sağ menüde görünecek ismini özelleştir:</p>
+    <input type="text" id="ai-name-input" placeholder="Örn: Zeynep AI veya Asistan" maxlength="30">
     <div class="modal-btns">
       <button class="m-cancel" onclick="closeModal('ai-settings-modal')">iptal</button>
       <button class="m-ok" onclick="saveAiSettings()">kaydet</button>
@@ -354,89 +800,130 @@ aside.sidebar{ display:flex;flex-direction:column; background:var(--bg2);overflo
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 const API = '';
-let aiName = '67';
+const YT_KEY = 'AIzaSyBxxy02dr7weQvBoG4CfXuYQz5I-6wMy58';
+
+let playlist = [], curTrack = -1, songsPlayed = 0;
+let startDate = localStorage.getItem('zw_start') || new Date().toISOString();
+localStorage.setItem('zw_start', startDate);
 let pendingFile = null;
-let allMediaItems = [];
+let ytPlayer = null, ytReady = false, isPlaying = false;
+let aiName = 'Zeynep AI';
 let pendingAiFile = null;
-
-let audioCtx = null;
-let currentAmbNode = null;
-let currentAmbType = null;
-
-function triggerFileInput() {
-  document.getElementById('file-in').click();
-}
-
-function toggleMenu(e) {
-  if(e) e.stopPropagation();
-  const menu = document.getElementById('menu-popup');
-  menu.classList.toggle('open');
-}
-
-function closeMenu() {
-  document.getElementById('menu-popup').classList.remove('open');
-}
-
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.menu-popup') && !e.target.closest('.add-zone-btn')) {
-    closeMenu();
-  }
-});
-
-function toggleAiExpand() {
-  const panel = document.getElementById('ai-panel');
-  panel.classList.toggle('expanded');
-  document.getElementById('ai-expand-btn').textContent = panel.classList.contains('expanded') ? '🗗' : '🗖';
-}
-
-function previewAiFile(e) {
-  if (e.target.files[0]) {
-    pendingAiFile = e.target.files[0];
-    const prev = document.getElementById('ai-file-preview');
-    prev.textContent = `Seçilen dosya: ${pendingAiFile.name}`;
-    prev.style.display = 'block';
-  }
-}
-
-function toggleAmb(type, btn) {
-  if (currentAmbType === type) {
-    if (currentAmbNode) { currentAmbNode.stop(); currentAmbNode = null; }
-    currentAmbType = null;
-    btn.classList.remove('active');
-    return;
-  }
-  if (currentAmbNode) { currentAmbNode.stop(); currentAmbNode = null; document.querySelectorAll('.amb-btn').forEach(b => b.classList.remove('active')); }
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  
-  const bufferSize = audioCtx.sampleRate * 3;
-  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const output = noiseBuffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-
-  const whiteNoise = audioCtx.createBufferSource();
-  whiteNoise.buffer = noiseBuffer; whiteNoise.loop = true;
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = type === 'rain' ? 'lowpass' : 'bandpass';
-  filter.frequency.setValueAtTime(type === 'rain' ? 500 : 300, audioCtx.currentTime);
-
-  const gainNode = audioCtx.createGain();
-  gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
-
-  whiteNoise.connect(filter); filter.connect(gainNode); gainNode.connect(audioCtx.destination);
-  whiteNoise.start();
-  currentAmbNode = whiteNoise; currentAmbType = type;
-  btn.classList.add('active');
-}
 
 async function init() {
   const savedTheme = localStorage.getItem('zw_theme') || 'midnight';
-  setTheme(savedTheme, document.querySelector(`[data-t="${savedTheme}"]`));
-  await Promise.all([loadPhotos(), loadQuotes(), loadLetters(), loadCountdowns(), loadMusic(), loadAiSettings()]);
+  const tBtn = document.querySelector(`[data-t="${savedTheme}"]`);
+  setTheme(savedTheme, tBtn);
+
+  const moods = JSON.parse(localStorage.getItem('zw_moods') || '[]');
+  document.querySelectorAll('.mtag').forEach(t => {
+    if (moods.includes(t.textContent.trim())) t.classList.add('on');
+  });
+
+  await Promise.all([loadPhotos(), loadQuotes(), loadPlaylist(), loadAiSettings()]);
+  updateStats();
   updateEmpty();
+}
+
+async function loadAiSettings() {
+  try {
+    const res = await fetch(`${API}/api/settings`);
+    const data = await res.json();
+    if (data.aiName) {
+      aiName = data.aiName;
+      document.getElementById('ai-title').textContent = '✦ ' + aiName;
+    }
+  } catch(e) {}
+}
+
+function openAiSettingsModal() {
+  document.getElementById('ai-name-input').value = aiName;
+  document.getElementById('ai-settings-modal').classList.add('open');
+  setTimeout(() => document.getElementById('ai-name-input').focus(), 100);
+}
+
+async function saveAiSettings() {
+  const newName = document.getElementById('ai-name-input').value.trim();
+  if (!newName) return;
+  aiName = newName;
+  document.getElementById('ai-title').textContent = '✦ ' + aiName;
+  closeModal('ai-settings-modal');
+  showToast('Yapay zeka adı güncellendi ✦');
+  
+  await fetch(`${API}/api/settings`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ aiName })
+  });
+}
+
+function handleAiFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  pendingAiFile = file;
+  const prev = document.getElementById('ai-file-preview');
+  document.getElementById('ai-file-name').textContent = file.name;
+  prev.style.display = 'flex';
+}
+
+async function sendAiMsg() {
+  const input = document.getElementById('ai-input');
+  const prompt = input.value.trim();
+  if (!prompt && !pendingAiFile) return;
+
+  const chatBox = document.getElementById('ai-chat-box');
+  
+  const userMsgDiv = document.createElement('div');
+  userMsgDiv.className = 'ai-msg user';
+  let userHtml = prompt ? esc(prompt) : '';
+  if (pendingAiFile) {
+    userHtml += `<br><img src="${URL.createObjectURL(pendingAiFile)}" alt="">`;
+  }
+  userMsgDiv.innerHTML = userHtml;
+  chatBox.appendChild(userMsgDiv);
+  input.value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  const fileToSend = pendingAiFile;
+  pendingAiFile = null;
+  document.getElementById('ai-file-preview').style.display = 'none';
+  document.getElementById('ai-file-in').value = '';
+
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'ai-msg assistant';
+  loadingDiv.innerHTML = 'Düşünüyor... ✦';
+  chatBox.appendChild(loadingDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  try {
+    const fd = new FormData();
+    fd.append('prompt', prompt || 'Bu fotoğrafı yorumla');
+    fd.append('aiName', aiName);
+    if (fileToSend) fd.append('image', fileToSend);
+
+    const res = await fetch(`${API}/api/ai/chat`, { method: 'POST', body: fd });
+    const data = await res.json();
+    
+    if (!res.ok) {
+      loadingDiv.textContent = data.error || 'Bir hata oluştu.';
+      return;
+    }
+
+    let assistantHtml = esc(data.text);
+    if (data.image) {
+      assistantHtml += `<br><img src="${data.image}" alt="Generated Image" loading="lazy">`;
+    }
+    loadingDiv.innerHTML = assistantHtml;
+  } catch (err) {
+    loadingDiv.textContent = 'Bağlantı hatası oluştu.';
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function setTheme(name, btn) {
@@ -446,306 +933,294 @@ function setTheme(name, btn) {
   localStorage.setItem('zw_theme', name);
 }
 
-function makeDraggable(el, id, endpoint) {
-  let isDragging = false, startX, startY, initialX, initialY;
-  el.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'VIDEO') return;
-    isDragging = true; startX = e.clientX; startY = e.clientY; initialX = el.offsetLeft; initialY = el.offsetTop; el.style.zIndex = 100;
-  });
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    el.style.left = (initialX + (e.clientX - startX)) + 'px';
-    el.style.top = (initialY + (e.clientY - startY)) + 'px';
-  });
-  document.addEventListener('mouseup', () => {
-    if (!isDragging) return;
-    isDragging = false; el.style.zIndex = 10;
-    fetch(`${API}/api/${endpoint}/${id}/pos`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ x: el.offsetLeft, y: el.offsetTop }) });
-  });
-}
-
 async function loadPhotos() {
-  const res = await fetch(`${API}/api/photos`);
-  allMediaItems = await res.json();
-  allMediaItems.forEach(renderPhoto);
+  try {
+    const res = await fetch(`${API}/api/photos`);
+    const photos = await res.json();
+    photos.sort((a,b) => a.order - b.order).forEach(renderPhoto);
+  } catch(e) {}
 }
 
 function handleFiles(e) {
-  if (e.target.files[0]) {
-    pendingFile = e.target.files[0];
+  const files = Array.from(e.target.files);
+  e.target.value = '';
+  if (!files.length) return;
+  processNextFile(files, 0);
+}
+
+function processNextFile(files, i) {
+  if (i >= files.length) return;
+  const file = files[i];
+  const reader = new FileReader();
+  reader.onload = ev => {
+    pendingFile = { file, dataUrl: ev.target.result, queue: files, qIdx: i };
+    document.getElementById('ph-preview').src = ev.target.result;
+    document.getElementById('ph-preview').style.display = 'block';
     document.getElementById('ph-caption').value = '';
     document.getElementById('ph-modal').classList.add('open');
-  }
-  e.target.value = '';
+    setTimeout(() => document.getElementById('ph-caption').focus(), 100);
+  };
+  reader.readAsDataURL(file);
 }
 
 async function confirmPhoto() {
   if (!pendingFile) return;
   const caption = document.getElementById('ph-caption').value.trim();
-  const fd = new FormData(); fd.append('image', pendingFile); fd.append('caption', caption);
-  closeModal('ph-modal'); showToast('medya sıkıştırılıp yükleniyor... 📌');
-  const res = await fetch(`${API}/api/photos`, { method: 'POST', body: fd });
-  if (res.ok) {
-    const item = await res.json();
-    allMediaItems.push(item); renderPhoto(item); updateEmpty(); showToast('iğnelendi! 📌');
+  const fd = new FormData();
+  fd.append('image', pendingFile.file);
+  fd.append('caption', caption);
+
+  closeModal('ph-modal');
+  showToast('iğneleniyor... 📌');
+
+  try {
+    const res = await fetch(`${API}/api/photos`, { method:'POST', body: fd });
+    if (!res.ok) throw new Error();
+    const photo = await res.json();
+    renderPhoto(photo);
+    updateStats();
+    updateEmpty();
+    showToast('iğnelendi! 📌');
+
+    if (pendingFile.qIdx + 1 < pendingFile.queue.length) {
+      setTimeout(() => processNextFile(pendingFile.queue, pendingFile.qIdx + 1), 400);
+    }
+    pendingFile = null;
+  } catch {
+    showToast('hata oluştu, tekrar dene');
+    pendingFile = null;
   }
-  pendingFile = null;
 }
 
 function renderPhoto(p) {
   const items = document.getElementById('board-items');
   const el = document.createElement('div');
   el.className = 'pinned-photo' + (p.taped ? ' taped' : '');
-  el.style.left = (p.x || (Math.random() * 400 + 40)) + 'px';
-  el.style.top = (p.y || (Math.random() * 300 + 40)) + 'px';
+  el.dataset.id = p.id;
   el.style.setProperty('--rot', p.rot + 'deg');
-  const mediaHtml = p.media_type === 'video' ? `<video src="${p.url}" autoplay loop muted playsinline controls></video>` : `<img src="${p.url}" alt="" loading="lazy">`;
-  el.innerHTML = `<div class="pin-tack"><div class="pin-head"></div><div class="pin-shaft"></div></div><button class="photo-del" onclick="delPhoto('${p.id}',this)">✕</button><div class="photo-frame">${mediaHtml}${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}</div>`;
-  items.appendChild(el); makeDraggable(el, p.id, 'photos');
+  if (p.taped) el.style.setProperty('--tape-rot', p.tapeRot + 'deg');
+
+  el.innerHTML = `
+    <div class="pin-tack">
+      <div class="pin-head"></div>
+      <div class="pin-shaft"></div>
+    </div>
+    <button class="photo-del" onclick="delPhoto('${p.id}',this)" title="sil">✕</button>
+    <div class="photo-frame">
+      <img src="/uploads/${p.filename}" alt="${esc(p.caption)}" loading="lazy">
+      ${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}
+    </div>`;
+  items.appendChild(el);
 }
 
 async function delPhoto(id, btn) {
-  await fetch(`${API}/api/photos/${id}`, { method: 'DELETE' });
-  btn.closest('.pinned-photo').remove(); updateEmpty();
-}
-
-function openMusicModal() { document.getElementById('music-modal').classList.add('open'); document.getElementById('music-search-input').value = ''; document.getElementById('search-results-box').innerHTML = ''; }
-
-let searchTimeout = null;
-function searchYouTubeSongs() {
-  clearTimeout(searchTimeout);
-  const q = document.getElementById('music-search-input').value.trim();
-  if (!q) { document.getElementById('search-results-box').innerHTML = ''; return; }
-  
-  searchTimeout = setTimeout(async () => {
-    const box = document.getElementById('search-results-box');
-    box.innerHTML = `<div style="padding:10px;text-align:center;font-size:0.75rem;color:var(--text2);">Aranıyor...</div>`;
-    
-    try {
-      const res = await fetch(`${API}/api/youtube/search?q=${encodeURIComponent(q)}`);
-      const results = await res.json();
-      box.innerHTML = '';
-      
-      if (!results || results.length === 0) {
-        box.innerHTML = `<div style="padding:10px;text-align:center;font-size:0.75rem;color:var(--text3);">Şarkı bulunamadı.</div>`;
-        return;
-      }
-
-      results.forEach(song => {
-        const div = document.createElement('div');
-        div.className = 'search-item';
-        div.innerHTML = `<img src="${song.thumb}"><div><div style="font-size:0.75rem;font-weight:600;">${esc(song.title)}</div><div style="font-size:0.6rem;color:#aaa;">${esc(song.channel)}</div></div>`;
-        div.onclick = () => addSongToPlaylist(song);
-        box.appendChild(div);
-      });
-    } catch(err) {
-      box.innerHTML = `<div style="padding:10px;text-align:center;font-size:0.75rem;color:#ff3d6b;">Arama hatası oluştu.</div>`;
-    }
-  }, 300);
-}
-
-async function addSongToPlaylist(song) {
-  closeModal('music-modal');
-  const res = await fetch(`${API}/api/playlist`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(song) });
-  if (res.ok) { loadMusic(); playMusic(song.videoId, song.title, song.channel, song.thumb); showToast('şarkı eklendi 🎵'); }
-}
-
-async function loadMusic() {
-  const res = await fetch(`${API}/api/playlist`);
-  const list = await res.json();
-  const box = document.getElementById('music-list');
-  box.innerHTML = '';
-  list.forEach(track => {
-    const div = document.createElement('div');
-    div.className = 'mini-item';
-    div.innerHTML = `<span onclick="playMusic('${track.videoId}', '${esc(track.title)}', '${esc(track.channel)}', '${track.thumb}')" style="cursor:pointer;">▶️ ${esc(track.title)}</span><button onclick="delMusic('${track.videoId}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button>`;
-    box.appendChild(div);
-  });
-}
-
-function playMusic(videoId, title, channel, thumb) {
-  document.getElementById('spotify-bar').style.display = 'flex';
-  document.getElementById('sp-title').textContent = title;
-  document.getElementById('sp-artist').textContent = channel || 'Spotify Music';
-  if (thumb) document.getElementById('sp-thumb').src = thumb;
-  document.getElementById('music-iframe').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-}
-
-function toggleMusicVideo() {
-  const modal = document.getElementById('spotify-video-modal');
-  modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
-
-function togglePlayPause() {
-  const iframe = document.getElementById('music-iframe');
-  iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-}
-
-function stopMusic() {
-  document.getElementById('spotify-bar').style.display = 'none';
-  document.getElementById('spotify-video-modal').style.display = 'none';
-  document.getElementById('music-iframe').src = '';
-}
-
-async function delMusic(videoId) {
-  await fetch(`${API}/api/playlist/${videoId}`, { method: 'DELETE' });
-  loadMusic();
-}
-
-let currentStoryIdx = 0;
-let storyTimer = null;
-
-function openStoryCapsule() {
-  if (allMediaItems.length === 0) return alert('Anı Kapsülü için panoya en az 1 medya eklemelisin!');
-  currentStoryIdx = 0;
-  document.getElementById('story-overlay').classList.add('open');
-  setupStories();
-}
-
-function setupStories() {
-  const bar = document.getElementById('story-progress-bar');
-  bar.innerHTML = '';
-  allMediaItems.forEach((_, idx) => {
-    bar.innerHTML += `<div class="story-progress-step"><div class="story-progress-fill" id="story-fill-${idx}"></div></div>`;
-  });
-  showStory(currentStoryIdx);
-}
-
-function showStory(idx) {
-  if (idx < 0 || idx >= allMediaItems.length) { closeStoryCapsule(); return; }
-  currentStoryIdx = idx;
-  const item = allMediaItems[idx];
-  const box = document.getElementById('story-content');
-  const cap = document.getElementById('story-caption');
-  
-  box.innerHTML = item.media_type === 'video' ? `<video src="${item.url}" autoplay loop playsinline></video>` : `<img src="${item.url}">`;
-  cap.textContent = item.caption || 'Anı ✦';
-
-  allMediaItems.forEach((_, i) => {
-    const el = document.getElementById(`story-fill-${i}`);
-    if (el) el.style.width = i < idx ? '100%' : '0%';
-  });
-
-  if (storyTimer) clearInterval(storyTimer);
-  let pct = 0;
-  const activeFill = document.getElementById(`story-fill-${idx}`);
-  storyTimer = setInterval(() => {
-    pct += 2;
-    if (activeFill) activeFill.style.width = pct + '%';
-    if (pct >= 100) { clearInterval(storyTimer); nextStory(); }
-  }, 100);
-}
-
-function nextStory() { showStory(currentStoryIdx + 1); }
-function prevStory() { showStory(currentStoryIdx - 1); }
-function closeStoryCapsule() {
-  if (storyTimer) clearInterval(storyTimer);
-  document.getElementById('story-overlay').classList.remove('open');
+  const el = btn.closest('.pinned-photo');
+  el.style.cssText += ';transform:scale(0) rotate(20deg)!important;opacity:0;transition:all .3s ease!important;';
+  try {
+    await fetch(`${API}/api/photos/${id}`, { method:'DELETE' });
+    setTimeout(() => el.remove(), 300);
+    updateStats();
+    updateEmpty();
+  } catch { el.style.cssText = ''; }
 }
 
 async function loadQuotes() {
-  const res = await fetch(`${API}/api/quotes`);
-  const quotes = await res.json();
-  quotes.forEach(renderQuote);
+  try {
+    const res = await fetch(`${API}/api/quotes`);
+    const quotes = await res.json();
+    quotes.sort((a,b) => a.order - b.order).forEach(renderQuote);
+  } catch(e) {}
 }
 
-function openQuoteModal() { document.getElementById('qu-modal').classList.add('open'); }
+function openQuoteModal() {
+  document.getElementById('qu-text').value = '';
+  document.getElementById('qu-modal').classList.add('open');
+  setTimeout(() => document.getElementById('qu-text').focus(), 100);
+}
+
 async function confirmQuote() {
   const text = document.getElementById('qu-text').value.trim();
-  if (!text) return; closeModal('qu-modal');
-  const res = await fetch(`${API}/api/quotes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
-  if (res.ok) { const q = await res.json(); renderQuote(q); updateEmpty(); showToast('söz eklendi ✦'); }
+  if (!text) { showToast('bir şeyler yaz ✦'); return; }
+  closeModal('qu-modal');
+
+  try {
+    const res = await fetch(`${API}/api/quotes`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ text })
+    });
+    if (!res.ok) throw new Error();
+    const quote = await res.json();
+    renderQuote(quote);
+    updateStats();
+    updateEmpty();
+    showToast('söz eklendi ✦');
+  } catch { showToast('hata oluştu'); }
 }
 
 function renderQuote(q) {
   const items = document.getElementById('board-items');
   const el = document.createElement('div');
-  el.className = `q-bubble ${q.style || ''}`;
-  el.style.left = (q.x || (Math.random() * 400 + 40)) + 'px'; el.style.top = (q.y || (Math.random() * 300 + 40)) + 'px';
-  el.innerHTML = `<div class="q-text">${esc(q.text)}</div><div class="q-footer"><span class="q-stars">★★★</span><button class="q-del" onclick="delQuote('${q.id}',this)">✕</button></div>`;
-  items.appendChild(el); makeDraggable(el, q.id, 'quotes');
-}
-async function delQuote(id, btn) { await fetch(`${API}/api/quotes/${id}`, { method: 'DELETE' }); btn.closest('.q-bubble').remove(); updateEmpty(); }
-
-function openLetterModal() { document.getElementById('letter-modal').classList.add('open'); }
-async function confirmLetter() {
-  const title = document.getElementById('let-title').value.trim();
-  const content = document.getElementById('let-content').value.trim();
-  const unlockDate = document.getElementById('let-date').value;
-  if (!title || !content || !unlockDate) return; closeModal('letter-modal');
-  const res = await fetch(`${API}/api/letters`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, content, unlockDate }) });
-  if (res.ok) { const l = await res.json(); renderLetter(l); updateEmpty(); showToast('mektup mühürlendi 💌'); }
-}
-async function loadLetters() { const res = await fetch(`${API}/api/letters`); const letters = await res.json(); letters.forEach(renderLetter); }
-function renderLetter(l) {
-  const items = document.getElementById('board-items');
-  const el = document.createElement('div'); el.className = 'envelope-item'; el.style.left = (Math.random() * 400 + 40) + 'px'; el.style.top = (Math.random() * 300 + 40) + 'px';
-  el.innerHTML = `<div class="envelope-box" onclick="alert('💌 Mektup: ${esc(l.title)}\\n\\n${esc(l.content)}')">💌 ${esc(l.title)}</div><button class="env-del" onclick="delLetter('${l.id}', this)">✕</button>`;
+  el.className = `q-bubble${q.style === 'alt' ? ' alt' : q.style === 'center' ? ' center' : ''}`;
+  el.dataset.id = q.id;
+  const stars = '★'.repeat(q.stars) + '☆'.repeat(5 - q.stars);
+  el.innerHTML = `
+    <div class="q-text">${esc(q.text)}</div>
+    <div class="q-footer">
+      <span class="q-stars">${stars}</span>
+      <button class="q-del" onclick="delQuote('${q.id}',this)">✕</button>
+    </div>`;
   items.appendChild(el);
 }
-async function delLetter(id, btn) { await fetch(`${API}/api/letters/${id}`, { method: 'DELETE' }); btn.closest('.envelope-item').remove(); updateEmpty(); }
 
-function openCountdownModal() { document.getElementById('cd-modal').classList.add('open'); }
-async function confirmCountdown() {
-  const title = document.getElementById('cd-title').value.trim();
-  const targetDate = document.getElementById('cd-date').value;
-  if (!title || !targetDate) return; closeModal('cd-modal');
-  const res = await fetch(`${API}/api/countdowns`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, targetDate }) });
-  if (res.ok) loadCountdowns();
+async function delQuote(id, btn) {
+  const el = btn.closest('.q-bubble');
+  el.style.cssText += ';transform:scale(0)!important;opacity:0;transition:all .3s ease!important;';
+  try {
+    await fetch(`${API}/api/quotes/${id}`, { method:'DELETE' });
+    setTimeout(() => el.remove(), 300);
+    updateStats();
+    updateEmpty();
+  } catch { el.style.cssText = ''; }
 }
-async function loadCountdowns() {
-  const res = await fetch(`${API}/api/countdowns`);
-  const list = await res.json(); const box = document.getElementById('countdown-list'); box.innerHTML = '';
-  list.forEach(c => {
-    const daysLeft = Math.ceil((new Date(c.targetDate) - new Date()) / (1000 * 60 * 60 * 24));
-    box.innerHTML += `<div class="mini-item"><span><b>${esc(c.title)}</b>: ${daysLeft > 0 ? daysLeft + ' gün kaldı' : 'Vakti geldi!'}</span><button onclick="delCd('${c.id}')" style="background:none;border:none;color:#ff3d6b;cursor:pointer;">✕</button></div>`;
+
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('yt-player', {
+    height:'100%', width:'100%',
+    playerVars:{ autoplay:0, controls:0, rel:0, modestbranding:1 },
+    events:{
+      onReady: () => { ytReady = true; setVol(80); },
+      onStateChange: onPState
+    }
   });
 }
-async function delCd(id) { await fetch(`${API}/api/countdowns/${id}`, { method: 'DELETE' }); loadCountdowns(); }
 
-async function loadAiSettings() { const res = await fetch(`${API}/api/settings`); const data = await res.json(); if (data.aiName) { aiName = data.aiName; document.getElementById('ai-title').textContent = '✦ ' + aiName; } }
-function openAiSettingsModal() { document.getElementById('ai-name-input').value = aiName; document.getElementById('ai-settings-modal').classList.add('open'); }
-async function saveAiSettings() { const newName = document.getElementById('ai-name-input').value.trim(); if (!newName) return; aiName = newName; document.getElementById('ai-title').textContent = '✦ ' + aiName; closeModal('ai-settings-modal'); await fetch(`${API}/api/settings`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ aiName }) }); }
-
-async function sendAiMsg() {
-  const input = document.getElementById('ai-input');
-  const prompt = input.value.trim();
-  if (!prompt && !pendingAiFile) return;
-
-  const chatBox = document.getElementById('ai-chat-box');
-  let filePreviewHtml = pendingAiFile ? `<br><span style="font-size:0.65rem;color:var(--accent);">[Fotoğraf eklendi]</span>` : '';
-  chatBox.innerHTML += `<div class="ai-msg user">${esc(prompt)}${filePreviewHtml}</div>`;
-  input.value = '';
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  const loading = document.createElement('div');
-  loading.className = 'ai-msg assistant';
-  loading.textContent = 'Düşünüyor...';
-  chatBox.appendChild(loading);
-
-  const fd = new FormData();
-  fd.append('prompt', prompt);
-  fd.append('aiName', aiName);
-  if (pendingAiFile) {
-    fd.append('image', pendingAiFile);
-    pendingAiFile = null;
-    document.getElementById('ai-file-preview').style.display = 'none';
+function onPState(e) {
+  if (e.data === YT.PlayerState.PLAYING) {
+    isPlaying = true;
+    document.getElementById('ic-play').style.display = 'none';
+    document.getElementById('ic-pause').style.display = 'block';
+  } else {
+    isPlaying = false;
+    document.getElementById('ic-play').style.display = 'block';
+    document.getElementById('ic-pause').style.display = 'none';
+    if (e.data === YT.PlayerState.ENDED) nextT();
   }
-
-  try {
-    const res = await fetch(`${API}/api/ai/chat`, { method: 'POST', body: fd });
-    const data = await res.json();
-    loading.innerHTML = esc(data.text) + (data.image ? `<br><img src="${data.image}">` : '');
-  } catch (err) {
-    loading.textContent = 'Yapay zeka yanıt veremedi.';
-  }
-  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-function updateEmpty() { document.getElementById('board-empty').style.display = document.getElementById('board-items').children.length > 1 ? 'none' : 'flex'; }
-function esc(s) { return s ? s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
+async function srch() {
+  const q = document.getElementById('ms').value.trim();
+  if (!q) return;
+  const resList = document.getElementById('results');
+  resList.innerHTML = '<div style="padding:10px;text-align:center;font-size:0.75rem;color:var(--text2);">Aranıyor...</div>';
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(q)}&maxResults=6&key=${YT_KEY}`;
+    const data = await fetch(url).then(r => r.json());
+    resList.innerHTML = '';
+    if (!data.items?.length) { resList.innerHTML = '<div style="padding:10px;text-align:center;font-size:0.75rem;color:var(--text3);">Sonuç yok ✦</div>'; return; }
+    data.items.forEach(item => {
+      const d = document.createElement('div');
+      d.className = 'res-item';
+      d.onclick = () => playT(item.id.videoId, item.snippet.title, item.snippet.channelTitle, item.snippet.thumbnails.default.url);
+      d.innerHTML = `
+        <img class="res-thumb" src="${item.snippet.thumbnails.default.url}" alt="">
+        <div class="res-info">
+          <div class="res-title">${esc(item.snippet.title)}</div>
+          <div class="res-ch">${esc(item.snippet.channelTitle)}</div>
+        </div>`;
+      resList.appendChild(d);
+    });
+  } catch { resList.innerHTML = '<div style="padding:10px;text-align:center;font-size:0.75rem;color:#ff3d6b;">Hata oluştu</div>'; }
+}
+
+async function playT(videoId, title, channel, thumb) {
+  if (!ytReady || !ytPlayer) { showToast('player hazır değil...'); return; }
+
+  await fetch(`${API}/api/playlist`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ videoId, title, channel, thumb })
+  });
+
+  if (!playlist.find(t => t.videoId === videoId)) {
+    playlist.push({ videoId, title, channel, thumb });
+  }
+  curTrack = playlist.findIndex(t => t.videoId === videoId);
+  songsPlayed++;
+
+  document.getElementById('yt-wrap').style.display = 'block';
+  document.getElementById('now-pl').textContent = '♪ ' + title;
+  ytPlayer.loadVideoById(videoId);
+  updateStats();
+  showToast('♪ ' + title.substring(0,35));
+}
+
+async function loadPlaylist() {
+  try {
+    const res = await fetch(`${API}/api/playlist`);
+    playlist = await res.json();
+  } catch(e) {}
+}
+
+function togPlay() { if (!ytPlayer || !ytReady) return; isPlaying ? ytPlayer.pauseVideo() : ytPlayer.playVideo(); }
+function nextT() {
+  if (!playlist.length) return;
+  curTrack = (curTrack + 1) % playlist.length;
+  const t = playlist[curTrack];
+  playT(t.videoId, t.title, t.channel, t.thumb);
+}
+function prevT() {
+  if (!playlist.length) return;
+  curTrack = (curTrack - 1 + playlist.length) % playlist.length;
+  const t = playlist[curTrack];
+  playT(t.videoId, t.title, t.channel, t.thumb);
+}
+function setVol(v) { if (ytPlayer && ytReady) ytPlayer.setVolume(parseInt(v)); }
+
+function togMood(el) {
+  el.classList.toggle('on');
+  const active = [...document.querySelectorAll('.mtag.on')].map(t => t.textContent.trim());
+  localStorage.setItem('zw_moods', JSON.stringify(active));
+}
+
+function updateStats() {
+  document.getElementById('st-ph').textContent = document.querySelectorAll('.pinned-photo').length;
+  document.getElementById('st-qu').textContent = document.querySelectorAll('.q-bubble').length;
+  document.getElementById('st-so').textContent = songsPlayed;
+  const days = Math.max(1, Math.floor((Date.now() - new Date(startDate)) / 86400000) + 1);
+  document.getElementById('st-dy').textContent = days;
+}
+
+function updateEmpty() {
+  const items = document.getElementById('board-items');
+  const empty = document.getElementById('board-empty');
+  empty.style.display = items.children.length > 0 ? 'none' : '';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+document.querySelectorAll('.overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+document.getElementById('ph-caption').addEventListener('keydown', e => { if (e.key === 'Enter') confirmPhoto(); });
+document.getElementById('qu-text').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); confirmQuote(); }
+});
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 init();
 </script>
