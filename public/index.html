@@ -994,6 +994,9 @@ function renderPhoto(p) {
   el.style.setProperty('--rot', p.rot + 'deg');
   if (p.taped) el.style.setProperty('--tape-rot', p.tapeRot + 'deg');
 
+  // Cloudinary URL veya eski yerel dosya uyumluluğu
+  const imgSrc = p.url ? p.url : `/uploads/${p.filename}`;
+
   el.innerHTML = `
     <div class="pin-tack">
       <div class="pin-head"></div>
@@ -1001,7 +1004,7 @@ function renderPhoto(p) {
     </div>
     <button class="photo-del" onclick="delPhoto('${p.id}',this)" title="sil">✕</button>
     <div class="photo-frame">
-      <img src="/uploads/${p.filename}" alt="${esc(p.caption)}" loading="lazy">
+      <img src="${imgSrc}" alt="${esc(p.caption)}" loading="lazy">
       ${p.caption ? `<div class="photo-caption">${esc(p.caption)}</div>` : ''}
     </div>`;
   items.appendChild(el);
