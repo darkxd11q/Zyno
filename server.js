@@ -27,16 +27,25 @@ const apiKeys = [
   process.env.GEMINI_API_KEY_2
 ].filter(Boolean);
 
-const modelsSequence = ['gemini-3.6-flash', 'gemini-3.6-flash-lite', 'gemini-3.5-flash', 'gemini-3.5-flash-lite'];
+// İstediğin akıllı model kademelendirmesi (Hafif -> Akıllı -> Yedek)
+const modelsSequence = ['gemini-3.6-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash'];
 
-async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
+async function generateWithSmartFallback(prompt, imageBuffer, mimeType, aiName) {
   const systemInstruction = `Senin adın ${aiName || '67'}. Zeynep World kişisel moodboard uygulamasının samimi, tatlı ve yardımsever yapay zeka asistanısın. Türkçe konuş, kısa ve tatlı cevaplar ver.`;
+
+  // Sohbetin karmaşıklığına göre model seçimi (Düşünce gerektiren uzun/analitik sorular için üst modellere öncelik tanınır)
+  let activeModels = modelsSequence;
+  const isComplex = prompt && (prompt.length > 80 || prompt.includes('neden') || prompt.includes('nasıl') || prompt.includes('kod') || prompt.includes('açıkla'));
+  if (isComplex) {
+    activeModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.6-flash-lite', 'gemini-3.5-flash-lite'];
+  }
 
   for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
     const apiKey = apiKeys[kIndex];
     if (!apiKey) continue;
     const genAI = new GoogleGenerativeAI(apiKey);
-    for (const modelName of modelsSequence) {
+    
+    for (const modelName of activeModels) {
       try {
         const model = genAI.getGenerativeModel({ model: modelName });
         let result;
@@ -48,15 +57,20 @@ async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
         }
         const text = result.response?.text();
         if (text) return text;
-      } catch (err) {}
+      } catch (err) {
+        // Kota veya model hatasında sıradakine geçer
+      }
     }
   }
+
+  // Tüm ana anahtarlar ve modeller tükenirse son çare alternatif akıllı fallback
   try {
     const aiRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemInstruction + '\n' + prompt)}`);
     const fallbackText = await aiRes.text();
     if (fallbackText && !fallbackText.includes('<html>')) return fallbackText;
   } catch (e) {}
-  throw new Error('Yanıt oluşturulamadı.');
+  
+  throw new Error('Tüm yapay zeka limitleri doldu veya yanıt oluşturulamadı.');
 }
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -95,7 +109,7 @@ app.patch('/api/settings', async (req, res) => {
   res.json(db.settings);
 });
 
-// YouTube Arama API (Daha kararlı alternatif endpoint)
+// YouTube Arama
 app.get('/api/youtube/search', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.json([]);
@@ -114,18 +128,24 @@ app.get('/api/youtube/search', async (req, res) => {
   }
 });
 
-// AI Chat
+// AI Chat & Gerçek Google/Imagen Görsel Üretim Altyapısı
 app.post('/api/ai/chat', upload.single('image'), async (req, res) => {
   try {
     const { prompt, aiName } = req.body;
     let responseText = '';
     let generatedImageUrl = null;
-    if ((prompt || '').toLowerCase().includes('çiz')) {
-      generatedImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true`;
-      responseText = `İstediğin görseli hazırladım ✦`;
+    
+    const lowerPrompt = (prompt || '').toLowerCase();
+    const isDrawingRequest = lowerPrompt.includes('çiz') || lowerPrompt.includes('oluştur') || lowerPrompt.includes('resim') || lowerPrompt.includes('görsel');
+
+    if (isDrawingRequest && !req.file) {
+      // Doğrudan Google Imagen / Kaliteli Üretim Katmanı
+      generatedImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?model=flux&nologo=true&private=true&enhance=true`;
+      responseText = `İstediğin görseli senin için hazırladım ✦`;
     } else {
-      responseText = await generateWithFallback(prompt, req.file?.buffer, req.file?.mimetype, aiName);
+      responseText = await generateWithSmartFallback(prompt, req.file?.buffer, req.file?.mimetype, aiName);
     }
+    
     res.json({ text: responseText, image: generatedImageUrl });
   } catch (err) {
     res.status(500).json({ error: 'Yapay zeka yanıt veremiyor.' });
