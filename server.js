@@ -1,25 +1,118 @@
+require('dotenv').config();
+
 const express = require('express');
 const multer  = require('multer');
 const cors    = require('cors');
 const path    = require('path');
 const fs      = require('fs');
 const { v4: uuidv4 } = require('uuid');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// ── Multi-Key & Multi-Model Fallback Yapılandırması ─────────────────────────
+const apiKeys = [
+  process.env.GEMINI_API_KEY_1,
+  process.env.GEMINI_API_KEY_2
+].filter(Boolean);
+
+// İstediğin model sırası: Flash -> Lite -> Flash -> Lite
+const modelsSequence = [
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-1.5-flash-8b'
+];
+
+async function generateWithFallback(prompt, imageBuffer, mimeType, aiName) {
+  if (apiKeys.length === 0) {
+    throw new Error('Hiçbir GEMINI_API_KEY bulunamadı! Render environment ayarlarına GEMINI_API_KEY_1 ve GEMINI_API_KEY_2 eklemelisin.');
+  }
+
+  const systemInstruction = `Senin adın ${aiName || 'Zeynep AI'}. Zeynep World kişisel moodboard uygulamasının samimi, tatlı ve yardımsever yapay zeka asistanısın. Türkçe konuş, kısa ve tatlı cevaplar ver.`;
+
+  let lastError = null;
+
+  // 1. Key bittiğinde 2. Key'e geçiş döngüsü
+  for (let kIndex = 0; kIndex < apiKeys.length; kIndex++) {
+    const apiKey = apiKeys[kIndex];
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    // Her key için model sırasını baştan uygula
+    for (const modelName of modelsSequence) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
+        let result;
+
+        if (imageBuffer) {
+          const imagePart = {
+            inlineData: {
+              data: imageBuffer.toString("base64"),
+              mimeType: mimeType
+            }
+          };
+          result = await model.generateContent([
+            systemInstruction,
+            prompt || "Bu fotoğrafı kısaca yorumla.",
+            imagePart
+          ]);
+        } else {
+          result = await model.generateContent([
+            systemInstruction,
+            prompt
+          ]);
+        }
+
+        const text = result.response.text();
+        if (text) {
+          console.log(`[AI Başarılı] Key #${kIndex + 1} | Model: ${modelName}`);
+          return text;
+        }
+      } catch (err) {
+        console.warn(`[AI Hata / Kota] Key #${kIndex + 1} (${modelName}):`, err.message);
+        lastError = err;
+        // Hata durumunda sıradaki modele veya diğer anahtara geçer
+      }
+    }
+  }
+
+  throw lastError || new Error('Tüm API anahtarları ve modeller tükendi.');
+}
+
 // ── Directories ─────────────────────────────────────────────────────────────
-const UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
+const PUBLIC_DIR  = path.join(__dirname, 'public');
+const UPLOADS_DIR = path.join(PUBLIC_DIR, 'uploads');
 const DB_FILE     = path.join(__dirname, 'db.json');
 
 [UPLOADS_DIR].forEach(d => { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); });
+
+// ── Rate Limiter (Anti-Abuse) ────────────────────────────────────────────────
+const aiLimits = {};
+const DAILY_LIMIT = 50;
+
+function checkRateLimit(req, res, next) {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+  const today = new Date().toISOString().split('T')[0];
+  
+  if (!aiLimits[ip] || aiLimits[ip].date !== today) {
+    aiLimits[ip] = { count: 0, date: today };
+  }
+  
+  if (aiLimits[ip].count >= DAILY_LIMIT) {
+    return res.status(429).json({ error: 'Günlük yapay zeka kullanım sınırına ulaştın! Yarın tekrar deneyebilirsin ✦' });
+  }
+  
+  aiLimits[ip].count++;
+  next();
+}
 
 // ── DB helpers ───────────────────────────────────────────────────────────────
 function readDB() {
   try {
     if (fs.existsSync(DB_FILE)) return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
   } catch (_) {}
-  return { photos: [], quotes: [], playlist: [], settings: { theme: 'midnight', moods: [] } };
+  return { photos: [], quotes: [], playlist: [], settings: { theme: 'midnight', moods: [], aiName: 'Zeynep AI' } };
 }
 
 function writeDB(data) {
@@ -36,7 +129,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 },          // 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_, file, cb) => {
     cb(null, file.mimetype.startsWith('image/'));
   }
@@ -45,11 +138,16 @@ const upload = multer({
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(PUBLIC_DIR));
+
+app.get('/', (_, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
 
 // ── API: Settings ─────────────────────────────────────────────────────────────
 app.get('/api/settings', (_, res) => {
   const db = readDB();
+  if (!db.settings.aiName) db.settings.aiName = 'Zeynep AI';
   res.json(db.settings);
 });
 
@@ -58,6 +156,41 @@ app.patch('/api/settings', (req, res) => {
   db.settings = { ...db.settings, ...req.body };
   writeDB(db);
   res.json(db.settings);
+});
+
+// ── API: AI Chat & Image Generation ──────────────────────────────────────────
+app.post('/api/ai/chat', checkRateLimit, upload.single('image'), async (req, res) => {
+  try {
+    const { prompt, aiName } = req.body;
+    let responseText = '';
+    let generatedImageUrl = null;
+
+    const lowerPrompt = (prompt || '').toLowerCase();
+    const isImageGenRequest = lowerPrompt.includes('çiz') || 
+                               lowerPrompt.includes('oluştur') || 
+                               lowerPrompt.includes('resmini yap') || 
+                               lowerPrompt.includes('görsel üret');
+
+    if (isImageGenRequest) {
+      const encodedPrompt = encodeURIComponent(prompt);
+      generatedImageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true`;
+      responseText = `İstediğin görseli senin için hazırladım ✦`;
+    } else {
+      const imageBuffer = req.file ? fs.readFileSync(req.file.path) : null;
+      const mimeType = req.file ? req.file.mimetype : null;
+
+      responseText = await generateWithFallback(prompt, imageBuffer, mimeType, aiName);
+    }
+
+    res.json({
+      text: responseText,
+      image: generatedImageUrl
+    });
+
+  } catch (err) {
+    console.error('AI Error:', err);
+    res.status(500).json({ error: 'Yapay zeka yanıt verirken bir hata oluştu veya tüm anahtarlar tükendi.' });
+  }
 });
 
 // ── API: Photos ───────────────────────────────────────────────────────────────
